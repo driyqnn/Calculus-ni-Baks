@@ -87,6 +87,18 @@ class DraeAnalyticsConfig {
   public readonly INPUT_RATE_LIMIT = 2000; // milliseconds between input events
   public readonly INACTIVITY_TIMEOUT = 60000; // 1 minute in milliseconds
   public readonly LOCAL_STORAGE_PREFIX = 'drae_';
+  public readonly MAX_LABEL_CHANGES = 1; // how many times users can change their username
+  public readonly MAX_LABEL_CHARACTERS = 25; // maximum characters allowed in username
+  public readonly MIN_LABEL_CHARACTERS = 3; // minimum characters required for username
+  public readonly INCOGNITO_STORAGE_THRESHOLD = 120000000; // storage quota threshold for incognito detection
+  public readonly MAX_SANITIZED_TEXT_LENGTH = 100; // maximum length for sanitized text
+  public readonly LABEL_NUMBER_MAX = 999; // maximum random number for label generation
+  public readonly WIDGET_Z_INDEX = 9999; // z-index for the widget
+  public readonly MODAL_Z_INDEX = 10000; // z-index for the modal
+  public readonly CHAR_COUNTER_ERROR_OFFSET = 2; // characters before max to show error
+  public readonly CHAR_COUNTER_WARNING_OFFSET = 7; // characters before max to show warning
+  public readonly ANIMATION_DURATION_FAST = 0.2; // fast animation duration in seconds
+  public readonly ANIMATION_DURATION_NORMAL = 0.3; // normal animation duration in seconds
   public readonly COLORS = {
     VISITOR_NEW: 0x00ff88,      // Bright green
     VISITOR_RETURNING: 0x3498db, // Blue  
@@ -158,16 +170,20 @@ const ANIMALS = [
 // =============================================================================
 
 /**
- * Check if user has already changed their label once
+ * Check if user has reached their maximum label changes
  */
 function hasLabelBeenChanged(): boolean {
-  return localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}label_changed`) === 'true';
+  const changes = parseInt(localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}label_changes`) || '0');
+  return changes >= CONFIG.MAX_LABEL_CHANGES;
 }
 
 /**
- * Mark label as changed (one-time only)
+ * Mark label as changed and increment counter
  */
 function markLabelAsChanged(): void {
+  const changes = parseInt(localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}label_changes`) || '0');
+  localStorage.setItem(`${CONFIG.LOCAL_STORAGE_PREFIX}label_changes`, (changes + 1).toString());
+  // Keep legacy flag for backward compatibility
   localStorage.setItem(`${CONFIG.LOCAL_STORAGE_PREFIX}label_changed`, 'true');
 }
 
@@ -205,7 +221,7 @@ function injectWidgetStyles(): void {
       position: fixed;
       top: 0;
       right: 0;
-      z-index: 9999;
+      z-index: ${CONFIG.WIDGET_Z_INDEX};
       background: #000000;
       color: #ffffff;
       padding: 6px 8px;
@@ -305,8 +321,8 @@ function injectWidgetStyles(): void {
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 10000;
-      animation: fadeIn 0.2s ease-out;
+      z-index: ${CONFIG.MODAL_Z_INDEX};
+      animation: fadeIn ${CONFIG.ANIMATION_DURATION_FAST}s ease-out;
     }
     
     @keyframes fadeIn {
@@ -461,6 +477,10 @@ function injectWidgetStyles(): void {
 function createDeviceLabelWidget(): void {
   if (deviceLabelWidget) return;
   
+  // Check if widget has been permanently hidden
+  const isWidgetHidden = localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}widget_hidden`) === 'true';
+  if (isWidgetHidden) return;
+  
   injectWidgetStyles();
   
   const currentLabel = localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}visitor_label`) || 'Unknown';
@@ -491,6 +511,24 @@ function createDeviceLabelWidget(): void {
   }
   
   document.body.appendChild(deviceLabelWidget);
+  
+  // Auto-hide widget after 10 seconds and mark as permanently hidden
+  setTimeout(() => {
+    if (deviceLabelWidget) {
+      deviceLabelWidget.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+      deviceLabelWidget.style.opacity = '0';
+      deviceLabelWidget.style.transform = 'translateY(-100%)';
+      
+      setTimeout(() => {
+        if (deviceLabelWidget && deviceLabelWidget.parentNode) {
+          deviceLabelWidget.parentNode.removeChild(deviceLabelWidget);
+          deviceLabelWidget = null;
+        }
+        // Mark widget as permanently hidden
+        localStorage.setItem(`${CONFIG.LOCAL_STORAGE_PREFIX}widget_hidden`, 'true');
+      }, 500);
+    }
+  }, 10000);
 }
 
 /**
@@ -516,6 +554,23 @@ function updateWidgetLabel(newLabel: string): void {
   if (statusIndicator) {
     statusIndicator.className = 'drae-status-indicator locked';
   }
+  
+  // Gradually fade out and remove the widget after label change
+  setTimeout(() => {
+    if (deviceLabelWidget) {
+      deviceLabelWidget.style.transition = 'opacity 2s ease-out, transform 2s ease-out';
+      deviceLabelWidget.style.opacity = '0';
+      deviceLabelWidget.style.transform = 'translateX(100%)';
+      
+      // Remove widget completely after fade out
+      setTimeout(() => {
+        if (deviceLabelWidget && deviceLabelWidget.parentNode) {
+          deviceLabelWidget.parentNode.removeChild(deviceLabelWidget);
+          deviceLabelWidget = null;
+        }
+      }, 2000);
+    }
+  }, 3000); // Wait 3 seconds before starting fade out
 }
 
 /**
@@ -540,11 +595,14 @@ function openLabelEditModal(): void {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        You can only change your label once! Choose wisely.
+        You can only change your label ${CONFIG.MAX_LABEL_CHANGES} time${CONFIG.MAX_LABEL_CHANGES > 1 ? 's' : ''}! Choose wisely.
       </div>
-      <input type="text" id="drae-new-label" value="${currentLabel}" maxlength="25" placeholder="Enter new label...">
+      <div class="drae-suggestions">
+        <p style="margin: 0 0 12px 0; color: #9ca3af; font-size: 13px;">💡 <strong>Ideas for your username:</strong> Your Instagram handle, class codename, nickname, surname, gaming tag, or anything that represents you!</p>
+      </div>
+      <input type="text" id="drae-new-label" value="${currentLabel}" maxlength="${CONFIG.MAX_LABEL_CHARACTERS}" placeholder="Enter new label...">
       <div class="drae-char-counter">
-        <span id="drae-char-count">0</span>/25 characters
+        <span id="drae-char-count">0</span>/${CONFIG.MAX_LABEL_CHARACTERS} characters
       </div>
       <div class="drae-modal-buttons">
         <button class="drae-modal-btn secondary" onclick="window.draeCloseLabelModal()">Cancel</button>
@@ -571,14 +629,14 @@ function openLabelEditModal(): void {
     const counterElement = charCounter.parentElement!;
     counterElement.className = 'drae-char-counter';
     
-    if (count >= 23) {
+    if (count >= CONFIG.MAX_LABEL_CHARACTERS - CONFIG.CHAR_COUNTER_ERROR_OFFSET) {
       counterElement.classList.add('error');
-    } else if (count >= 18) {
+    } else if (count >= CONFIG.MAX_LABEL_CHARACTERS - CONFIG.CHAR_COUNTER_WARNING_OFFSET) {
       counterElement.classList.add('warning');
     }
     
     // Disable save button if too long or too short
-    saveBtn.disabled = count < 3 || count > 25;
+    saveBtn.disabled = count < CONFIG.MIN_LABEL_CHARACTERS || count > CONFIG.MAX_LABEL_CHARACTERS;
   };
   
   // Initial counter update
@@ -714,7 +772,7 @@ function getOrCreateLabel(hash: string): string {
 
   const adjective = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
   const animal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
-  const number = Math.floor(Math.random() * 999) + 1;
+  const number = Math.floor(Math.random() * CONFIG.LABEL_NUMBER_MAX) + 1;
   const label = `${adjective}${animal}-${number}`;
   
   localStorage.setItem(`${CONFIG.LOCAL_STORAGE_PREFIX}visitor_label`, label);
@@ -761,7 +819,7 @@ async function isIncognito(): Promise<boolean> {
     if ('storage' in navigator && 'estimate' in navigator.storage) {
       const estimate = await navigator.storage.estimate();
       // Incognito mode typically has very limited quota
-      if (estimate.quota && estimate.quota < 120000000) { // Less than ~120MB
+      if (estimate.quota && estimate.quota < CONFIG.INCOGNITO_STORAGE_THRESHOLD) { // Less than ~120MB
         return true;
       }
     }
@@ -880,7 +938,7 @@ function hasDraeTag(element: Element): boolean {
  * Sanitize text content for tagging
  */
 function sanitizeText(text: string): string {
-  return text.trim().replace(/\s+/g, ' ').substring(0, 100);
+  return text.trim().replace(/\s+/g, ' ').substring(0, CONFIG.MAX_SANITIZED_TEXT_LENGTH);
 }
 
 /**
