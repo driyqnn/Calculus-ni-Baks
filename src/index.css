@@ -1,0 +1,258 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode as default - Neutral color scheme similar to Next.js UI */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5% 64.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border selection:bg-primary/10 selection:text-primary;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* Dynamic font sizing using CSS custom property */
+  :root {
+    --dynamic-font-size: 1rem;
+  }
+  
+  body {
+    font-size: var(--dynamic-font-size);
+  }
+}
+
+@layer components {
+  .input-group {
+    @apply flex flex-col gap-2 sm:gap-3 w-full items-start mb-3 sm:mb-4 transition-all;
+  }
+  
+  .input-group label {
+    @apply text-sm font-medium text-left w-full;
+  }
+  
+  .input-pair {
+    @apply flex flex-col sm:flex-row gap-2 sm:gap-3 w-full;
+  }
+  
+  .grade-result {
+    @apply p-3 sm:p-4 lg:p-5 rounded-lg bg-card/70 backdrop-blur-sm mb-2 animate-fade-in shadow-sm border border-border;
+  }
+  
+  .grade-result h3 {
+    @apply font-bold text-base sm:text-lg mb-2;
+  }
+  
+  .grade-value {
+    @apply font-bold text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .card-header {
+    @apply bg-muted text-muted-foreground p-3 sm:p-4 rounded-t-lg font-medium text-sm sm:text-base;
+  }
+  
+  .calculator-card {
+    @apply bg-card rounded-lg overflow-hidden mb-4 sm:mb-6 border border-border transition-all duration-300 hover:border-primary/20;
+  }
+  
+  .calculator-body {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+  
+  /* Responsive grid system */
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4;
+  }
+  
+  .mobile-input {
+    @apply w-full text-base py-3 px-4 rounded-md border border-input bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors;
+  }
+  
+  /* Touch-friendly interface */
+  .mobile-button {
+    @apply min-h-[44px] px-4 py-2 text-sm sm:text-base touch-manipulation;
+  }
+
+  /* Better input styling */
+  .score-input {
+    @apply focus-within:ring-2 focus-within:ring-primary/20 transition-all;
+  }
+  
+  /* Calculation preview styling - small text */
+  .calculation-details {
+    @apply text-xs;
+  }
+  
+  /* Pure black sidebar styling */
+  .sidebar-black {
+    @apply bg-black border-gray-800;
+  }
+  
+  .sidebar-black [data-sidebar="content"] {
+    @apply bg-black;
+  }
+  
+  .sidebar-black [data-sidebar="group-label"] {
+    @apply text-gray-300;
+  }
+  
+  .sidebar-black .text-muted-foreground {
+    @apply text-gray-400;
+  }
+  
+  .sidebar-black .bg-muted\/30 {
+    @apply bg-gray-900/40;
+  }
+  .calculation-details .katex {
+    @apply text-xs;
+  }
+
+  /* Subtle GWA Calculator Button */
+  .gwa-button-subtle {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium
+           bg-primary/10 hover:bg-primary/20 text-primary 
+           border border-primary/20 hover:border-primary/30
+           rounded-lg shadow-sm hover:shadow-md
+           transition-all duration-300 ease-in-out
+           relative no-underline;
+    animation: subtle-bounce 3s ease-in-out infinite;
+  }
+  
+  .gwa-button-mobile {
+    @apply px-3 py-2 text-xs gap-1.5;
+  }
+  
+  .gwa-button-subtle:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+  
+  @keyframes subtle-bounce {
+    0%, 100% { 
+      transform: translateY(0px);
+    }
+    50% { 
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Wide screen layout improvements */
+  @media (min-width: 1024px) {
+    .mobile-grid {
+      @apply grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4;
+    }
+    
+    .calculator-card {
+      @apply max-w-none;
+    }
+    
+    .calculator-body {
+      @apply p-6 xl:p-8;
+    }
+    
+    /* Better spacing on wide screens */
+    .input-group {
+      @apply mb-4 lg:mb-6;
+    }
+    
+    .grade-result {
+      @apply p-6;
+    }
+  }
+
+  /* Ultra-wide screen improvements */
+  @media (min-width: 1536px) {
+    .mobile-grid {
+      @apply gap-6;
+    }
+    
+    .calculator-body {
+      @apply p-8 xl:p-10;
+    }
+  }
+}
+
+/* Dark Mode Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
