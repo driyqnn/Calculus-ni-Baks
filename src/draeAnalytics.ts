@@ -206,7 +206,7 @@ function injectWidgetStyles(): void {
       top: 0;
       right: 0;
       z-index: 9999;
-      background: #ff4444;
+      background: #000000;
       color: #ffffff;
       padding: 6px 8px;
       border-radius: 0 0 0 8px;
@@ -217,12 +217,11 @@ function injectWidgetStyles(): void {
       align-items: center;
       gap: 6px;
       backdrop-filter: blur(12px);
-      border: 1px solid #ff6666;
+      border: 1px solid #333333;
       border-top: none;
       border-right: none;
-      box-shadow: 0 4px 20px rgba(255, 68, 68, 0.6);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       min-width: 120px;
-      animation: annoyingPulse 2s infinite;
     }
     
     @keyframes annoyingPulse {
@@ -494,13 +493,17 @@ function createDeviceLabelWidget(): void {
   deviceLabelWidget.innerHTML = `
     <div class="drae-label-container">
       <div class="drae-tag-icon">
-        ⚠️
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none">
+          <path fill="currentColor" d="M19.459,1.572 C20.208,1.744 20.966,2.025 21.471,2.529 C21.975,3.034 22.256,3.792 22.428,4.54 C22.605,5.314 22.693,6.199 22.729,7.069 C22.801,8.812 22.672,10.592 22.588,11.502 C22.536,12.07 22.303,12.595 21.941,13.017 C19.231,16.169 16.423,19.039 13.356,21.785 C11.953,23.041 9.858,23.054 8.397,21.923 C5.987,20.057 3.943,18.013 2.077,15.603 C0.946,14.142 0.959,12.047 2.215,10.644 C4.961,7.577 7.831,4.769 10.983,2.059 C11.405,1.696 11.93,1.464 12.498,1.412 C13.408,1.328 15.188,1.199 16.931,1.271 C17.801,1.307 18.686,1.394 19.459,1.572 Z M16.869,2.77 C15.224,2.702 13.521,2.824 12.635,2.906 C12.391,2.928 12.157,3.028 11.961,3.197 C8.857,5.864 6.034,8.627 3.333,11.644 C2.583,12.482 2.553,13.767 3.263,14.684 C5.051,16.994 7.006,18.949 9.315,20.737 C10.233,21.447 11.518,21.417 12.356,20.667 C15.373,17.965 18.136,15.143 20.803,12.039 C20.972,11.843 21.072,11.609 21.094,11.365 C21.176,10.479 21.298,8.776 21.23,7.131 C21.196,6.308 21.115,5.524 20.966,4.876 C20.811,4.204 20.608,3.788 20.41,3.59 C20.212,3.392 19.796,3.188 19.124,3.034 C18.476,2.885 17.692,2.804 16.869,2.77 Z M15.25,6.5 C15.25,5.258 16.257,4.25 17.5,4.25 C18.743,4.25 19.75,5.258 19.75,6.5 C19.75,7.743 18.743,8.75 17.5,8.75 C16.257,8.75 15.25,7.743 15.25,6.5 Z M7.53,13.47 L10.53,16.47 C10.823,16.763 10.823,17.238 10.53,17.531 C10.237,17.823 9.763,17.823 9.47,17.531 L6.47,14.531 C6.177,14.238 6.177,13.763 6.47,13.47 C6.763,13.177 7.237,13.177 7.53,13.47 Z M17.5,7.25 C17.914,7.25 18.25,6.914 18.25,6.5 C18.25,6.086 17.914,5.75 17.5,5.75 C17.086,5.75 16.75,6.086 16.75,6.5 C16.75,6.914 17.086,7.25 17.5,7.25 Z" />
+        </svg>
       </div>
-      <span class="drae-label-text">🚨 REMOVE THIS ANNOYING TRACKING WIDGET!</span>
-      <div class="drae-status-indicator editable" style="background: #ff0000; animation: blink 1s infinite;"></div>
-    </div>
-    <div style="position: absolute; top: -25px; right: 0; background: #ff0000; color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; white-space: nowrap; animation: bounce 1s infinite;">
-      Edit draeAnalytics.ts to remove this!
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+        <div class="drae-label-text">${currentLabel}</div>
+        <div style="font-size: 9px; color: #ff6b6b; text-align: center; font-weight: 600; text-shadow: 0 0 4px rgba(255,107,107,0.8); animation: blink 2s infinite;">
+          Edit this weird name to your name to remove it
+        </div>
+      </div>
+      <div class="drae-status-indicator ${hasChanged ? 'locked' : 'editable'}"></div>
     </div>
     ${!hasChanged ? `<button class="drae-edit-btn" title="Edit label">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none">
