@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="3;url=https://example.com">
+    <title>We moved.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0D0E0E;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 650px;
+            width: 100%;
+            padding: 60px 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            opacity: 0.7;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            margin-bottom: 50px;
+            color: #b0b0b0;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 35px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .countdown {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            padding: 18px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            display: inline-block;
+            color: #ffffff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .timer-value {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: #808080;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .card-value {
+            font-size: 1rem;
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        .redirect-note {
+            font-size: 0.9rem;
+            color: #808080;
+            margin-top: 30px;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 50px 30px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.05rem;
+            }
+
+            .countdown {
+                font-size: 1.2rem;
+                padding: 16px 32px;
+            }
+
+            .icon {
+                font-size: 3.5rem;
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .countdown {
+                font-size: 1.1rem;
+                padding: 14px 28px;
+            }
+        }
+    </style>
+    <script>
+        const REDIRECT_URL = "https://calc-snowy-rho.vercel.app/";
+        let timeLeft = 4;
+
+        function updateCountdown() {
+            const timerElement = document.querySelector('.timer-value');
+            const countdownElement = document.querySelector('.countdown');
+
+            if (!timerElement || !countdownElement) return;
+
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                countdownElement.textContent = "Redirecting now...";
+                setTimeout(() => {
+                    window.location.href = REDIRECT_URL;
+                }, 500);
+                return;
+            }
+
+            timeLeft--;
+            setTimeout(updateCountdown, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', updateCountdown);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📦</div>
+        <h1>We moved.</h1>
+        <p class="subtitle">Our new home is ready and waiting for you.</p>
+
+        <div class="spinner"></div>
+
+        <div class="countdown">
+            Redirecting in <span class="timer-value"></span> seconds...
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="card-label">Status</div>
+                <div class="card-value">Relocated</div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-label">Action</div>
+                <div class="card-value">Automatic</div>
+            </div>
+        </div>
+
+        <div class="redirect-note">
+            You will be automatically redirected to our new location.
+        </div>
+    </div>
+</body>
+</html>
