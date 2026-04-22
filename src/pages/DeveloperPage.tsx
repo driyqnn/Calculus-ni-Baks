@@ -35,7 +35,7 @@ const DeveloperPage: React.FC = () => {
 
         <section className="grid grid-cols-2 lg:grid-cols-3 gap-3 max-w-xl mx-auto">
           {[
-            { icon: <Github className="w-4 h-4" />, label: "GitHub", path: "https://github.com/driyqnn" },
+            { icon: <Github className="w-4 h-4" />, label: "GitHub", path: "https://github.com/chqrlzz-dev" },
             { icon: <MessageSquare className="w-4 h-4" />, label: "Messenger", path: "https://m.me/chqrlzz" },
             { icon: <Mail className="w-4 h-4" />, label: "Email", path: "mailto:chqrlzz.dev@gmail.com" },
           ].map((social) => (
