@@ -91,25 +91,39 @@ const ModernGradeCalculator: React.FC = () => {
 
   if (isLoading || !activeCourse) return <div className="p-8 text-center animate-pulse">Initializing Grade Engine...</div>;
 
+  const periodWeights = {
+    quiz: activeCourse.settings.quizWeight || 0.35,
+    exam: activeCourse.settings.examWeight || 0.45,
+    attendance: activeCourse.settings.attendanceWeight || 0.1,
+    problemSet: activeCourse.settings.problemSetWeight || 0.1
+  };
+
   const midtermGrade = calculatePeriodGrade(
-    activeCourse.midtermState.quizScores.filter((s): s is number => s !== null),
+    activeCourse.midtermState.quizScores,
     activeCourse.midtermState.quizMaxScores,
-    activeCourse.midtermState.examScore || 0,
+    activeCourse.midtermState.examScore,
     activeCourse.midtermState.examMaxScore,
-    activeCourse.midtermState.attendance || 0,
-    activeCourse.midtermState.problemSet || 0
+    activeCourse.midtermState.attendance,
+    activeCourse.midtermState.problemSet,
+    periodWeights
   );
 
   const finalsGrade = calculatePeriodGrade(
-    activeCourse.finalsState.quizScores.filter((s): s is number => s !== null),
+    activeCourse.finalsState.quizScores,
     activeCourse.finalsState.quizMaxScores,
-    activeCourse.finalsState.examScore || 0,
+    activeCourse.finalsState.examScore,
     activeCourse.finalsState.examMaxScore,
-    activeCourse.finalsState.attendance || 0,
-    activeCourse.finalsState.problemSet || 0
+    activeCourse.finalsState.attendance,
+    activeCourse.finalsState.problemSet,
+    periodWeights
   );
 
-  const finalGrade = calculateFinalGrade(midtermGrade, finalsGrade);
+  const finalGrade = calculateFinalGrade(
+    midtermGrade, 
+    finalsGrade, 
+    activeCourse.settings.midtermWeight, 
+    activeCourse.settings.finalsWeight
+  );
   const gpe = calculateGPE(finalGrade);
   const gradeColor = getGradeColor(finalGrade);
 

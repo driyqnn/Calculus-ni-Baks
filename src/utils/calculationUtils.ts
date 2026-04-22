@@ -1,123 +1,82 @@
 // Calculate quiz average (simple average of non-null scores)
-export const calculateQuizAverage = (scores: number[], maxScores: number[]): number => {
-  // Filter out null/undefined scores and their corresponding max scores
+export const calculateQuizAverage = (scores: (number | null)[], maxScores: (number | null)[]): number => {
   const validScores: number[] = [];
   const validMaxScores: number[] = [];
   
   scores.forEach((score, index) => {
-    if (score !== null && score !== undefined && maxScores[index] !== null && maxScores[index] !== undefined) {
+    if (score !== null && score !== undefined && maxScores[index] !== null && maxScores[index] !== undefined && maxScores[index] !== 0) {
       validScores.push(score);
-      validMaxScores.push(maxScores[index]);
+      validMaxScores.push(maxScores[index] as number);
     }
   });
 
   if (validScores.length === 0) return 0;
 
-  // Convert each score to percentage then average
   const percentages = validScores.map((score, index) => (score / validMaxScores[index]) * 100);
   return percentages.reduce((sum, percent) => sum + percent, 0) / percentages.length;
 };
 
-// Calculate adjusted quiz score (35% weight)
-export const calculateAdjustedQuiz = (scores: number[], maxScores: number[]): number => {
+// Calculate adjusted quiz score with dynamic weight
+export const calculateAdjustedQuiz = (scores: (number | null)[], maxScores: (number | null)[], weight: number = 0.35): number => {
   const quizAvg = calculateQuizAverage(scores, maxScores);
-  return ((quizAvg * 0.5) + 50) * 0.35;
+  return ((quizAvg * 0.5) + 50) * weight;
 };
 
-// Calculate adjusted exam score (45% weight)
-export const calculateAdjustedExam = (score: number, maxScore: number): number => {
-  if (score === null || score === undefined || maxScore === 0) {
-    return 0;
-  }
-  
-  // Convert to percentage (out of 100)
+// Calculate adjusted exam score with dynamic weight
+export const calculateAdjustedExam = (score: number | null, maxScore: number | null, weight: number = 0.45): number => {
+  if (score === null || score === undefined || !maxScore) return 0;
   const percentage = (score / maxScore) * 100;
-  
-  // Apply formula: ((score * 0.5) + 50) * 0.45
-  return ((percentage * 0.5) + 50) * 0.45;
+  return ((percentage * 0.5) + 50) * weight;
 };
 
-// Calculate the period grade (midterm or finals)
+// Calculate the period grade (midterm or finals) with full dynamic weighting
 export const calculatePeriodGrade = (
-  quizScores: number[], 
-  quizMaxScores: number[], 
-  examScore: number,
-  examMaxScore: number,
-  attendance: number,
-  problemSet: number
+  quizScores: (number | null)[], 
+  quizMaxScores: (number | null)[], 
+  examScore: number | null,
+  examMaxScore: number | null,
+  attendance: number | null,
+  problemSet: number | null,
+  weights: { quiz: number, exam: number, attendance: number, problemSet: number } = { quiz: 0.35, exam: 0.45, attendance: 0.1, problemSet: 0.1 }
 ): number => {
-  const adjustedQuiz = calculateAdjustedQuiz(quizScores, quizMaxScores);
-  const adjustedExam = calculateAdjustedExam(examScore, examMaxScore);
+  const adjustedQuiz = calculateAdjustedQuiz(quizScores, quizMaxScores, weights.quiz);
+  const adjustedExam = calculateAdjustedExam(examScore, examMaxScore, weights.exam);
   
-  // Attendance and Problem Set are input as percentages directly
-  const attendanceScore = attendance; // Direct percentage
-  const problemSetScore = problemSet; // Direct percentage
+  const attendanceScore = (attendance || 0) * weights.attendance; 
+  const problemSetScore = (problemSet || 0) * weights.problemSet; 
   
   return adjustedQuiz + adjustedExam + attendanceScore + problemSetScore;
 };
 
-// Calculate final grade
-export const calculateFinalGrade = (midterm: number, finals: number): number => {
-  return midterm * 0.30 + finals * 0.70;
+// Calculate final grade with dynamic period weighting
+export const calculateFinalGrade = (
+  midterm: number, 
+  finals: number, 
+  midtermWeight: number = 0.30, 
+  finalsWeight: number = 0.70
+): number => {
+  return (midterm * midtermWeight) + (finals * finalsWeight);
 };
 
-// Natural rounding function (rounds to nearest whole number, .5 rounds up)
+// Natural rounding function
 export const naturalRound = (num: number): number => {
   return Math.round(num);
 };
 
-// Calculate scores needed to reach a target final grade
+// Reverse engineering needed finals score
 export const calculatePointsNeeded = (
   currentMidterm: number, 
-  currentFinals: number,
-  targetGrade: number = 75
-): { 
-  midtermNeeded: number | null, 
-  finalsNeeded: number | null,
-  isPossible: boolean
-} => {
-  // If both midterm and finals are valid, calculate how much more is needed
-  if (currentMidterm > 0 && currentFinals === 0) {
-    // Calculate how many points needed in finals
-    const finalsNeeded = (targetGrade - currentMidterm * 0.3) / 0.7;
-    return {
-      midtermNeeded: null,
-      finalsNeeded: finalsNeeded > 100 ? null : finalsNeeded,
-      isPossible: finalsNeeded <= 100
-    };
-  } else if (currentMidterm === 0 && currentFinals > 0) {
-    // Calculate how many points needed in midterm
-    const midtermNeeded = (targetGrade - currentFinals * 0.7) / 0.3;
-    return {
-      midtermNeeded: midtermNeeded > 100 ? null : midtermNeeded,
-      finalsNeeded: null,
-      isPossible: midtermNeeded <= 100
-    };
-  } else if (currentMidterm > 0 && currentFinals > 0) {
-    // Both are already completed, check if they reach the target
-    const currentFinalGrade = calculateFinalGrade(currentMidterm, currentFinals);
-    return {
-      midtermNeeded: null,
-      finalsNeeded: null,
-      isPossible: currentFinalGrade >= targetGrade
-    };
-  }
-  
-  // Default case: calculate minimum scores needed for both
-  return {
-    midtermNeeded: targetGrade,
-    finalsNeeded: targetGrade,
-    isPossible: true
-  };
+  targetGrade: number = 75,
+  midtermWeight: number = 0.3,
+  finalsWeight: number = 0.7
+): number => {
+  return (targetGrade - (currentMidterm * midtermWeight)) / finalsWeight;
 };
 
-// Calculate GPE based on the fixed grading scale
+// GPE mapping
 export const calculateGPE = (finalGrade: number): string => {
-  // Round to the nearest whole number for evaluation
   const roundedGrade = naturalRound(finalGrade);
-  
   if (roundedGrade < 75) return "5.00";
-  
   if (roundedGrade >= 99) return "1.00";
   if (roundedGrade >= 96) return "1.25";
   if (roundedGrade >= 93) return "1.50";
@@ -127,21 +86,18 @@ export const calculateGPE = (finalGrade: number): string => {
   if (roundedGrade >= 81) return "2.50";
   if (roundedGrade >= 78) return "2.75";
   if (roundedGrade >= 75) return "3.00";
-  
-  return "5.00"; // Fallback
+  return "5.00";
 };
 
-// Get color based on grade
+// UI color mapping
 export const getGradeColor = (finalGrade: number): string => {
   const roundedGrade = naturalRound(finalGrade);
-  
-  if (roundedGrade < 75) return "text-destructive"; // Failed
-  if (roundedGrade < 80) return "text-yellow-500"; // Passed but needs improvement
-  if (roundedGrade < 90) return "text-orange-400"; // Good
-  return "text-green-500"; // Excellent
+  if (roundedGrade < 75) return "text-destructive";
+  if (roundedGrade < 80) return "text-yellow-500";
+  if (roundedGrade < 90) return "text-orange-400";
+  return "text-green-500";
 };
 
-// Format final grade with detailed precision in parentheses
 export const formatFinalGrade = (finalGrade: number): string => {
   const roundedGrade = naturalRound(finalGrade);
   return `${roundedGrade} (${finalGrade.toFixed(2)})`;

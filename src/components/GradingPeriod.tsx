@@ -7,13 +7,10 @@ import { Button } from "@/components/ui/button";
 
 interface GradingPeriodProps {
   periodName: string;
-  quizNumbers: number[];
   quizScores: (number | null)[];
   quizMaxScores: (number | null)[];
   examScore: number | null;
   examMaxScore: number | null;
-  attendance: number | null;
-  problemSet: number | null;
   periodGrade: number;
   onChange: (
     field: string,
@@ -24,25 +21,20 @@ interface GradingPeriodProps {
   onRemoveQuiz: (index: number) => void;
   onShowCalc: () => void;
   errors?: { [key: string]: string | null };
-  quizCount: number;
 }
 
 const GradingPeriod: React.FC<GradingPeriodProps> = ({
   periodName,
-  quizNumbers,
   quizScores,
   quizMaxScores,
   examScore,
   examMaxScore,
-  attendance,
-  problemSet,
   periodGrade,
   onChange,
   onAddQuiz,
   onRemoveQuiz,
   onShowCalc,
   errors = {},
-  quizCount,
 }) => {
 
   const getGradeColor = (grade: number): string => {
@@ -84,16 +76,15 @@ const GradingPeriod: React.FC<GradingPeriodProps> = ({
                 onMaxScoreChange={(value) => onChange("quizMaxScores", value, index)}
                 error={errors[`quizScores${index}`] || errors[`quizMaxScores${index}`]}
               />
-              {quizScores.length > 1 && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => onRemoveQuiz(index)}
-                  className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-destructive/20 text-destructive border border-destructive/20 shadow-lg active:scale-90 transition-transform"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-              )}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onRemoveQuiz(index)}
+                className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-destructive/20 text-destructive border border-destructive/20 shadow-lg active:scale-90 transition-transform"
+                disabled={quizScores.length <= 1}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
             </div>
           ))}
         </div>
