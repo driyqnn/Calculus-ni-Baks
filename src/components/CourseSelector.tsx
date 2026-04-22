@@ -57,18 +57,18 @@ const CourseSelector: React.FC<CourseSelectorProps> = ({
   const activeCourse = courses.find(c => c.id === activeCourseId);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-card rounded-lg border">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1">
-        <label className="text-sm font-medium text-muted-foreground">Course:</label>
+    <div className="flex flex-col gap-4 items-stretch justify-between mb-4 p-5 bg-muted/30 rounded-3xl border border-white/5">
+      <div className="flex flex-col gap-3 items-stretch flex-1">
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">Subject</label>
         <Select value={activeCourseId || ''} onValueChange={onCourseSelect}>
-          <SelectTrigger className="w-full sm:w-[250px]">
+          <SelectTrigger className="w-full h-14 bg-background border-none rounded-2xl font-bold shadow-inner">
             <SelectValue placeholder="Select a course">
               {activeCourse?.name || 'Select a course'}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-2xl border-white/5">
             {courses.map((course) => (
-              <SelectItem key={course.id} value={course.id}>
+              <SelectItem key={course.id} value={course.id} className="rounded-xl">
                 {course.name}
               </SelectItem>
             ))}
@@ -76,12 +76,12 @@ const CourseSelector: React.FC<CourseSelectorProps> = ({
         </Select>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-end">
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Course
+            <Button variant="outline" className="h-10 px-4 rounded-xl text-xs font-bold gap-2">
+              <Plus className="w-4 h-4" />
+              Add New
             </Button>
           </DialogTrigger>
           <DialogContent>

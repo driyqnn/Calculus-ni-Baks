@@ -140,296 +140,87 @@ const CalculationPreview: React.FC<CalculationPreviewProps> = ({
   );
 
   return (
-    <Card className="mt-8 border-primary/20">
-      <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm sm:text-base">
-              <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-primary" />
-                Live Calculation Preview
-              </div>
-              <Badge variant="secondary" className="text-xs">Real-time</Badge>
-            </CardTitle>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Watch your grades calculate in real-time as you input values
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={handlePDFExport}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <FileText className="h-4 w-4" />
-              Export PDF
-            </Button>
-            <Button
-              onClick={handleImageExport}
-              size="sm"
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <Image className="h-4 w-4" />
-              Export Image
-            </Button>
-          </div>
+    <div className="space-y-6 text-sm animate-fade-in pb-10">
+      {/* Midterm Period */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-lg font-black text-primary uppercase tracking-tighter">Midterm Path</h3>
+          <Badge variant="outline" className={`font-mono font-black ${getGradeColor(grades.midterm)}`}>
+            {grades.midterm.toFixed(2)}%
+          </Badge>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4 sm:space-y-6 text-sm">
         
-        {/* Midterm Period */}
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <h3 className="text-base sm:text-lg font-semibold text-primary">Midterm Period</h3>
-            <div className={`px-3 py-1 rounded-full border-2 ${getGradeBgColor(grades.midterm)}`}>
-              <span className={`text-sm font-bold ${getGradeColor(grades.midterm)}`}>
-                {grades.midterm.toFixed(2)}%
-              </span>
+        <div className="bg-muted/20 p-5 rounded-[24px] border border-white/5 space-y-5">
+          <div className="space-y-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <PenTool className="w-3 h-3" /> Quiz Avg (35%)
             </div>
-          </div>
-          
-          {/* Quiz Calculation */}
-          <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-            <h4 className="font-medium mb-2 sm:mb-3 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-              <PenTool className="h-4 w-4" />
-              Quiz Component (35%)
-            </h4>
-            
-            {/* Formula with live values */}
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Step 1: Calculate Quiz Average</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Quiz Average} = \\frac{${createQuizDisplayString(midtermState.quizScores, midtermState.quizMaxScores)}}{${quizCount}} \\times 100`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Result:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(midtermQuizAvg)}`}>
-                  {midtermQuizAvg.toFixed(2)}%
-                </span>
-              </div>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+              <BlockMath>{`\\text{Avg} = \\frac{${createQuizDisplayString(midtermState.quizScores, midtermState.quizMaxScores)}}{${quizCount}}`}</BlockMath>
             </div>
-
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Step 2: Apply Adjustment Formula</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Adjusted Quiz} = \\left(${midtermQuizAvg.toFixed(2)} \\times 0.5 + 50\\right) \\times 0.35`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Final Quiz Score:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(midtermAdjustedQuiz * 100 / 35)}`}>
-                  {midtermAdjustedQuiz.toFixed(2)} points
-                </span>
-              </div>
-            </div>
+            <div className="text-right font-black text-primary tabular-nums">{midtermQuizAvg.toFixed(2)}%</div>
           </div>
 
-          {/* Exam Calculation */}
-          <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-            <h4 className="font-medium mb-2 sm:mb-3 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" />
-              Major Exam (45%)
-            </h4>
-            
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Exam Score Calculation</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Exam} = \\left(\\frac{${formatValue(midtermState.examScore)}}{${formatValue(midtermState.examMaxScore)}} \\times 100 \\times 0.5 + 50\\right) \\times 0.45`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Final Exam Score:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(midtermAdjustedExam * 100 / 45)}`}>
-                  {midtermAdjustedExam.toFixed(2)} points
-                </span>
-              </div>
+          <div className="space-y-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <ClipboardList className="w-3 h-3" /> Major Exam (45%)
             </div>
-          </div>
-
-          {/* Other Components */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-              <h4 className="font-medium mb-2 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Attendance (10%)
-              </h4>
-              <div className="bg-background p-2 rounded border overflow-x-auto">
-                <InlineMath>{`\\text{Attendance} = ${formatValue(midtermState.attendance)}\\%`}</InlineMath>
-              </div>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(midtermState.examScore)}}{${formatValue(midtermState.examMaxScore)}} \\times 0.5) + 50`}</BlockMath>
             </div>
-            
-            <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-              <h4 className="font-medium mb-2 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Problem Set (10%)
-              </h4>
-              <div className="bg-background p-2 rounded border overflow-x-auto">
-                <InlineMath>{`\\text{Problem Set} = ${formatValue(midtermState.problemSet)}\\%`}</InlineMath>
-              </div>
-            </div>
-          </div>
-
-          {/* Midterm Total */}
-          <div className="bg-primary/10 p-3 sm:p-4 rounded-lg border border-primary/30">
-            <div className="text-xs sm:text-sm font-medium mb-2">Midterm Total Calculation:</div>
-            <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-              <BlockMath>{`\\text{Midterm} = ${midtermAdjustedQuiz.toFixed(2)} + ${midtermAdjustedExam.toFixed(2)} + ${formatValue(midtermState.attendance)} + ${formatValue(midtermState.problemSet)} = ${grades.midterm.toFixed(2)}`}</BlockMath>
-            </div>
+            <div className="text-right font-black text-primary tabular-nums">{midtermAdjustedExam.toFixed(2)} pts</div>
           </div>
         </div>
+      </div>
 
-        <Separator className="my-6" />
+      <Separator className="bg-white/5" />
 
-        {/* Finals Period */}
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <h3 className="text-base sm:text-lg font-semibold text-primary">Finals Period</h3>
-            <div className={`px-3 py-1 rounded-full border-2 ${getGradeBgColor(grades.finals)}`}>
-              <span className={`text-sm font-bold ${getGradeColor(grades.finals)}`}>
-                {grades.finals.toFixed(2)}%
-              </span>
+      {/* Finals Period */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-lg font-black text-primary uppercase tracking-tighter">Finals Path</h3>
+          <Badge variant="outline" className={`font-mono font-black ${getGradeColor(grades.finals)}`}>
+            {grades.finals.toFixed(2)}%
+          </Badge>
+        </div>
+        
+        <div className="bg-muted/20 p-5 rounded-[24px] border border-white/5 space-y-5">
+          <div className="space-y-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <PenTool className="w-3 h-3" /> Quiz Avg (35%)
             </div>
-          </div>
-          
-          {/* Quiz Calculation */}
-          <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-            <h4 className="font-medium mb-2 sm:mb-3 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-              <PenTool className="h-4 w-4" />
-              Quiz Component (35%)
-            </h4>
-            
-            {/* Formula with live values */}
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Step 1: Calculate Quiz Average</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Quiz Average} = \\frac{${createQuizDisplayString(finalsState.quizScores, finalsState.quizMaxScores)}}{${quizCount}} \\times 100`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Result:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(finalsQuizAvg)}`}>
-                  {finalsQuizAvg.toFixed(2)}%
-                </span>
-              </div>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+              <BlockMath>{`\\text{Avg} = \\frac{${createQuizDisplayString(finalsState.quizScores, finalsState.quizMaxScores)}}{${quizCount}}`}</BlockMath>
             </div>
-
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Step 2: Apply Adjustment Formula</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Adjusted Quiz} = \\left(${finalsQuizAvg.toFixed(2)} \\times 0.5 + 50\\right) \\times 0.35`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Final Quiz Score:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(finalsAdjustedQuiz * 100 / 35)}`}>
-                  {finalsAdjustedQuiz.toFixed(2)} points
-                </span>
-              </div>
-            </div>
+            <div className="text-right font-black text-primary tabular-nums">{finalsQuizAvg.toFixed(2)}%</div>
           </div>
 
-          {/* Exam Calculation */}
-          <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-            <h4 className="font-medium mb-2 sm:mb-3 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" />
-              Major Exam (45%)
-            </h4>
-            
-            <div className="space-y-2 mb-2 sm:mb-3">
-              <div className="text-xs sm:text-sm font-medium">Exam Score Calculation</div>
-              <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-                <BlockMath>{`\\text{Exam} = \\left(\\frac{${formatValue(finalsState.examScore)}}{${formatValue(finalsState.examMaxScore)}} \\times 100 \\times 0.5 + 50\\right) \\times 0.45`}</BlockMath>
-              </div>
-              <div className="text-xs sm:text-sm text-muted-foreground pl-2 sm:pl-4">
-                <span className="text-gray-500 dark:text-gray-400">Final Exam Score:</span> 
-                <span className={`font-bold text-lg ml-2 ${getGradeColor(finalsAdjustedExam * 100 / 45)}`}>
-                  {finalsAdjustedExam.toFixed(2)} points
-                </span>
-              </div>
+          <div className="space-y-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+              <ClipboardList className="w-3 h-3" /> Major Exam (45%)
             </div>
-          </div>
-
-          {/* Other Components */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-              <h4 className="font-medium mb-2 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Attendance (10%)
-              </h4>
-              <div className="bg-background p-2 rounded border overflow-x-auto">
-                <InlineMath>{`\\text{Attendance} = ${formatValue(finalsState.attendance)}\\%`}</InlineMath>
-              </div>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(finalsState.examScore)}}{${formatValue(finalsState.examMaxScore)}} \\times 0.5) + 50`}</BlockMath>
             </div>
-            
-            <div className="bg-muted/30 p-3 sm:p-4 rounded-lg border border-muted">
-              <h4 className="font-medium mb-2 text-xs sm:text-sm text-accent-foreground flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Problem Set (10%)
-              </h4>
-              <div className="bg-background p-2 rounded border overflow-x-auto">
-                <InlineMath>{`\\text{Problem Set} = ${formatValue(finalsState.problemSet)}\\%`}</InlineMath>
-              </div>
-            </div>
-          </div>
-
-          {/* Finals Total */}
-          <div className="bg-primary/10 p-3 sm:p-4 rounded-lg border border-primary/30">
-            <div className="text-xs sm:text-sm font-medium mb-2">Finals Total Calculation:</div>
-            <div className="bg-background p-2 sm:p-3 rounded border overflow-x-auto">
-              <BlockMath>{`\\text{Finals} = ${finalsAdjustedQuiz.toFixed(2)} + ${finalsAdjustedExam.toFixed(2)} + ${formatValue(finalsState.attendance)} + ${formatValue(finalsState.problemSet)} = ${grades.finals.toFixed(2)}`}</BlockMath>
-            </div>
+            <div className="text-right font-black text-primary tabular-nums">{finalsAdjustedExam.toFixed(2)} pts</div>
           </div>
         </div>
+      </div>
 
-        <Separator className="my-6" />
+      <Separator className="bg-white/5" />
 
-        {/* Final Grade Calculation */}
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-            <h3 className="text-base sm:text-lg font-semibold text-primary">Final Grade</h3>
-            <div className={`px-4 py-2 rounded-full border-2 ${getGradeBgColor(grades.finalGrade)}`}>
-              <span className={`text-lg font-bold ${getGradeColor(grades.finalGrade)}`}>
-                RESULT: {grades.finalGrade.toFixed(2)}%
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-primary/5 to-accent/5 p-4 sm:p-6 rounded-lg border border-primary/20">
-            <div className="space-y-3 sm:space-y-4">
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Final Grade Formula</div>
-                <div className="bg-background p-3 sm:p-4 rounded border overflow-x-auto">
-                  <BlockMath>{`\\text{Final Grade} = \\text{Midterm} \\times 0.30 + \\text{Finals} \\times 0.70`}</BlockMath>
-                </div>
-              </div>
-              
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">With Your Current Scores</div>
-                <div className="bg-background p-3 sm:p-4 rounded border overflow-x-auto">
-                  <BlockMath>{`\\text{Final Grade} = ${grades.midterm.toFixed(2)} \\times 0.30 + ${grades.finals.toFixed(2)} \\times 0.70`}</BlockMath>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className={`p-4 sm:p-6 rounded-xl border-2 ${getGradeBgColor(grades.finalGrade)}`}>
-                  <div className="text-sm font-medium mb-2 text-gray-500 dark:text-gray-400">FINAL RESULT</div>
-                  <div className={`text-2xl sm:text-4xl font-bold ${getGradeColor(grades.finalGrade)}`}>
-                    {grades.finalGrade.toFixed(2)}%
-                  </div>
-                  <div className="text-xs mt-2 text-gray-500 dark:text-gray-400">
-                    {grades.finalGrade >= 75 ? "PASSING GRADE!" : "NEEDS IMPROVEMENT"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Final Sum */}
+      <div className="bg-primary/10 p-6 rounded-[32px] border border-primary/20 space-y-4">
+        <div className="text-center text-[10px] font-black uppercase tracking-widest text-primary/70">Final Computation</div>
+        <div className="bg-background/80 backdrop-blur-md p-4 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+          <BlockMath>{`\\text{Total} = (${grades.midterm.toFixed(1)} \\times 0.3) + (${grades.finals.toFixed(1)} \\times 0.7)`}</BlockMath>
         </div>
-
-        {/* Live Update Indicator */}
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-center">Calculations update automatically as you type</span>
+        <div className="text-center">
+          <div className={`text-4xl font-black ${getGradeColor(grades.finalGrade)} tabular-nums`}>{grades.finalGrade.toFixed(2)}%</div>
+          <div className="text-[8px] font-black uppercase tracking-widest opacity-50 mt-1">Confirmed Result</div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

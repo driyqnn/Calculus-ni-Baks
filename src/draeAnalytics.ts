@@ -140,17 +140,17 @@ let lastInputTime = 0;
 let inactivityTimer: NodeJS.Timeout | null = null;
 let isUserActive = true;
 let mutationObserver: MutationObserver | null = null;
-let sessionStartTime = Date.now();
-let currentRoute = window.location.pathname;
-let userJourney: string[] = [];
-let eventQueue: Array<{payload: DiscordPayload, priority: 'HIGH' | 'MEDIUM' | 'LOW', timestamp: number}> = [];
+const sessionStartTime = Date.now();
+const currentRoute = window.location.pathname;
+const userJourney: string[] = [];
+const eventQueue: Array<{payload: DiscordPayload, priority: 'HIGH' | 'MEDIUM' | 'LOW', timestamp: number}> = [];
 
 // Device label widget state
 let deviceLabelWidget: HTMLElement | null = null;
 let labelEditModal: HTMLElement | null = null;
 
 // Track input focus times for calculating interaction duration
-let inputFocusTimes: Map<Element, number> = new Map();
+const inputFocusTimes: Map<Element, number> = new Map();
 
 // Random word lists for generating friendly labels
 const ADJECTIVES = [
