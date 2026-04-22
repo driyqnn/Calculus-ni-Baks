@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 
-const FAQPage: React.FC = () => {
+const SupportPage: React.FC = () => {
   useEffect(() => {
     document.documentElement.classList.add('dark');
     window.scrollTo(0, 0);
@@ -134,4 +134,4 @@ const FAQPage: React.FC = () => {
   );
 };
 
-export default FAQPage;
+export default SupportPage;

@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CalculationsPage from "./pages/CalculationsPage";
+import SupportPage from "./pages/FAQPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import DeveloperPage from "./pages/DeveloperPage";
 import MainLayout from "./components/MainLayout";
@@ -25,7 +26,7 @@ const App = () => (
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/calculations" element={<CalculationsPage />} />
-            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/faq" element={<SupportPage />} />
             <Route path="/feedback" element={<FeedbackPage />} />
             <Route path="/developer" element={<DeveloperPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
