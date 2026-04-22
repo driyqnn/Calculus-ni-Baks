@@ -89,9 +89,9 @@ const GradingPeriod: React.FC<GradingPeriodProps> = ({
                   variant="ghost" 
                   size="icon" 
                   onClick={() => onRemoveQuiz(index)}
-                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive/10 text-destructive border border-destructive/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-destructive/20 text-destructive border border-destructive/20 shadow-lg active:scale-90 transition-transform"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               )}
             </div>
@@ -117,43 +117,13 @@ const GradingPeriod: React.FC<GradingPeriodProps> = ({
         />
       </section>
 
-      <Separator className="bg-border/50" />
-
-      {/* Others Section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2 px-2">
-          <div className="w-1 h-6 bg-primary rounded-full" />
-          <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">Other Metrics</h3>
-        </div>
-        <div className="grid grid-cols-1 gap-3">
-          <ScoreInput
-            label="Attendance & Participation"
-            score={attendance}
-            onScoreChange={(value) => onChange("attendance", value)}
-            error={errors.attendance}
-            placeholder="0"
-            showMaxScore={false}
-            maxValue={100}
-          />
-          <ScoreInput
-            label="Problem Sets & Tasks"
-            score={problemSet}
-            onScoreChange={(value) => onChange("problemSet", value)}
-            error={errors.problemSet}
-            placeholder="0"
-            showMaxScore={false}
-            maxValue={100}
-          />
-        </div>
-      </section>
-
       <div className="pt-4 px-2">
         <Button 
           onClick={onShowCalc}
           className="w-full h-14 rounded-2xl bg-muted/50 border border-white/5 text-foreground hover:bg-muted font-black uppercase tracking-widest text-[10px] gap-2 shadow-inner"
         >
           <Calculator className="w-4 h-4 text-primary" />
-          Show Full Mathematical Proof
+          SHOW CALCULATIONS
         </Button>
       </div>
     </div>
