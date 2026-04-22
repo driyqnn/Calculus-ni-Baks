@@ -100,6 +100,39 @@ const DeveloperPage: React.FC = () => {
           </div>
         </section>
 
+        <section className="space-y-4 pb-10">
+          <div className="flex items-center gap-2 px-2">
+            <div className="w-1 h-6 bg-primary rounded-full" />
+            <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">Shout Out</h3>
+          </div>
+          <Card className="border-none bg-muted/20 rounded-xl overflow-hidden">
+            <CardContent className="p-0">
+              <div className="divide-y divide-white/5">
+                {[
+                  { name: "Josh Ammiel Azarce", id: "24343638811900104" },
+                  { name: "Ael John Gabriel Santural", id: "24604111752513880" },
+                  { name: "Sam Dasal", id: "25022575560664528" },
+                  { name: "Ram Rebadomia", id: "24038915585776734" },
+                  { name: "Rexer John Fuyonan", id: "24338810812370538" },
+                  { name: "Emmanuel John Osorio", id: "31274626728802704" },
+                  { name: "Christofer John Delojero", id: "9831950646933987" }
+                ].map((person) => (
+                  <a 
+                    key={person.id} 
+                    href={`https://m.me/${person.id}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="flex items-center justify-between p-4 hover:bg-primary/5 transition-colors group"
+                  >
+                    <span className="text-sm font-bold tracking-tight text-muted-foreground group-hover:text-foreground transition-colors">{person.name}</span>
+                    <MessageSquare className="w-4 h-4 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
         <footer className="text-center py-10 opacity-30">
           <p className="text-[10px] font-black uppercase tracking-[0.3em]">Code & Design by @chqrlzz</p>
         </footer>

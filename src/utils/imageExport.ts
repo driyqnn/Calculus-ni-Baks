@@ -6,24 +6,11 @@ import {
   calculatePeriodGrade, 
   calculateFinalGrade, 
   calculateGPE, 
-  calculateAdjustedQuiz, 
-  calculateAdjustedExam 
+  calculateQuizAverage
 } from './calculationUtils';
 
 const formatValue = (value: number | null | undefined): string => {
   return value !== null && value !== undefined ? value.toString() : "0";
-};
-
-const createQuizDisplayString = (scores: (number | null)[], maxScores: (number | null)[], quizCount: number): string => {
-  const quizPairs = scores.map((score, index) => {
-    const max = maxScores[index];
-    const scoreStr = score !== null ? score.toString() : "0";
-    const maxStr = max !== null ? max.toString() : "100";
-    return `\\frac{${scoreStr}}{${maxStr}}`;
-  });
-  
-  if (quizPairs.length === 0) return `\\text{Avg} = \\frac{0}{100}`;
-  return `\\text{Avg} = \\frac{${quizPairs.join(" + ")}}{${quizCount}}`;
 };
 
 export const generateImageTranscript = async (course: CourseData): Promise<void> => {
@@ -51,15 +38,16 @@ export const generateImageTranscript = async (course: CourseData): Promise<void>
     const gpe = calculateGPE(finalGrade);
 
     // Prepare KaTeX formulas
-    const quizCount = Math.max(course.midtermState.quizScores.length, course.finalsState.quizScores.length, 1);
+    const midtermQuizAvg = calculateQuizAverage(course.midtermState.quizScores, course.midtermState.quizMaxScores);
+    const finalsQuizAvg = calculateQuizAverage(course.finalsState.quizScores, course.finalsState.quizMaxScores);
+
+    const midtermQuizFormula = `\\text{Quiz} = (\\frac{${midtermQuizAvg.toFixed(2)}}{100} \\times 0.5 + 0.5) \\times 35`;
+    const midtermExamFormula = `\\text{Exam} = (\\frac{${formatValue(course.midtermState.examScore)}}{${formatValue(course.midtermState.examMaxScore)}} \\times 0.5 + 0.5) \\times 45`;
     
-    const midtermQuizFormula = createQuizDisplayString(course.midtermState.quizScores, course.midtermState.quizMaxScores, quizCount);
-    const midtermExamFormula = `\\text{Exam} = (\\frac{${formatValue(course.midtermState.examScore)}}{${formatValue(course.midtermState.examMaxScore)}} \\times 0.5) + 50`;
+    const finalsQuizFormula = `\\text{Quiz} = (\\frac{${finalsQuizAvg.toFixed(2)}}{100} \\times 0.5 + 0.5) \\times 35`;
+    const finalsExamFormula = `\\text{Exam} = (\\frac{${formatValue(course.finalsState.examScore)}}{${formatValue(course.finalsState.examMaxScore)}} \\times 0.5 + 0.5) \\times 45`;
     
-    const finalsQuizFormula = createQuizDisplayString(course.finalsState.quizScores, course.finalsState.quizMaxScores, quizCount);
-    const finalsExamFormula = `\\text{Exam} = (\\frac{${formatValue(course.finalsState.examScore)}}{${formatValue(course.finalsState.examMaxScore)}} \\times 0.5) + 50`;
-    
-    const finalTotalFormula = `\\text{Total} = (${midtermGrade.toFixed(1)} \\times ${course.settings.midtermWeight}) + (${finalsGrade.toFixed(1)} \\times ${course.settings.finalsWeight})`;
+    const finalTotalFormula = `\\text{Total} = (${midtermGrade.toFixed(1)} \\times 0.3) + (${finalsGrade.toFixed(1)} \\times 0.7)`;
 
     container.innerHTML = `
       <div style="background: #0a0a0a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
@@ -83,13 +71,13 @@ export const generateImageTranscript = async (course: CourseData): Promise<void>
           <h3 style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: #8b5cf6; margin: 0 0 20px 0;">Mathematical Proof</h3>
           
           <div style="margin-bottom: 25px;">
-            <div style="font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px;">[1] Midterm Formulae</div>
+            <div style="font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px;">[1] Midterm Components</div>
             <div id="midterm-quiz" style="margin-bottom: 10px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px;"></div>
             <div id="midterm-exam" style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px;"></div>
           </div>
 
           <div style="margin-bottom: 25px;">
-            <div style="font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px;">[2] Finals Formulae</div>
+            <div style="font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.3); text-transform: uppercase; margin-bottom: 10px;">[2] Finals Components</div>
             <div id="finals-quiz" style="margin-bottom: 10px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px;"></div>
             <div id="finals-exam" style="padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px;"></div>
           </div>

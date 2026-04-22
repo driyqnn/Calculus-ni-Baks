@@ -153,20 +153,20 @@ const CalculationPreview: React.FC<CalculationPreviewProps> = ({
         <div className="bg-muted/20 p-5 rounded-[24px] border border-white/5 space-y-5">
           <div className="space-y-2">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <PenTool className="w-3 h-3" /> Quiz Avg (35%)
+              <PenTool className="w-3 h-3" /> Quiz Component (35 pts)
             </div>
-            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
-              <BlockMath>{`\\text{Avg} = \\frac{${createQuizDisplayString(midtermState.quizScores, midtermState.quizMaxScores)}}{${quizCount}}`}</BlockMath>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar text-[11px]">
+              <BlockMath>{`\\text{Quiz} = (\\frac{${midtermQuizAvg.toFixed(2)}}{100} \\times 0.5 + 0.5) \\times 35`}</BlockMath>
             </div>
-            <div className="text-right font-black text-primary tabular-nums">{midtermQuizAvg.toFixed(2)}%</div>
+            <div className="text-right font-black text-primary tabular-nums">{midtermAdjustedQuiz.toFixed(2)} pts</div>
           </div>
 
           <div className="space-y-2">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <ClipboardList className="w-3 h-3" /> Major Exam (45%)
+              <ClipboardList className="w-3 h-3" /> Major Exam (45 pts)
             </div>
-            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
-              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(midtermState.examScore)}}{${formatValue(midtermState.examMaxScore)}} \\times 0.5) + 50`}</BlockMath>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar text-[11px]">
+              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(midtermState.examScore)}}{${formatValue(midtermState.examMaxScore)}} \\times 0.5 + 0.5) \\times 45`}</BlockMath>
             </div>
             <div className="text-right font-black text-primary tabular-nums">{midtermAdjustedExam.toFixed(2)} pts</div>
           </div>
@@ -187,20 +187,20 @@ const CalculationPreview: React.FC<CalculationPreviewProps> = ({
         <div className="bg-muted/20 p-5 rounded-[24px] border border-white/5 space-y-5">
           <div className="space-y-2">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <PenTool className="w-3 h-3" /> Quiz Avg (35%)
+              <PenTool className="w-3 h-3" /> Quiz Component (35 pts)
             </div>
-            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
-              <BlockMath>{`\\text{Avg} = \\frac{${createQuizDisplayString(finalsState.quizScores, finalsState.quizMaxScores)}}{${quizCount}}`}</BlockMath>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar text-[11px]">
+              <BlockMath>{`\\text{Quiz} = (\\frac{${finalsQuizAvg.toFixed(2)}}{100} \\times 0.5 + 0.5) \\times 35`}</BlockMath>
             </div>
-            <div className="text-right font-black text-primary tabular-nums">{finalsQuizAvg.toFixed(2)}%</div>
+            <div className="text-right font-black text-primary tabular-nums">{finalsAdjustedQuiz.toFixed(2)} pts</div>
           </div>
 
           <div className="space-y-2">
             <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-              <ClipboardList className="w-3 h-3" /> Major Exam (45%)
+              <ClipboardList className="w-3 h-3" /> Major Exam (45 pts)
             </div>
-            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
-              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(finalsState.examScore)}}{${formatValue(finalsState.examMaxScore)}} \\times 0.5) + 50`}</BlockMath>
+            <div className="bg-background/50 p-3 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar text-[11px]">
+              <BlockMath>{`\\text{Exam} = (\\frac{${formatValue(finalsState.examScore)}}{${formatValue(finalsState.examMaxScore)}} \\times 0.5 + 0.5) \\times 45`}</BlockMath>
             </div>
             <div className="text-right font-black text-primary tabular-nums">{finalsAdjustedExam.toFixed(2)} pts</div>
           </div>

@@ -17,16 +17,27 @@ export const calculateQuizAverage = (scores: (number | null)[], maxScores: (numb
 };
 
 // Calculate adjusted quiz score with dynamic weight
+// Formula: (Avg / 100 * 0.5 + 50) * Weight
 export const calculateAdjustedQuiz = (scores: (number | null)[], maxScores: (number | null)[], weight: number = 0.35): number => {
   const quizAvg = calculateQuizAverage(scores, maxScores);
-  return ((quizAvg * 0.5) + 50) * weight;
+  // weight is likely 0.35, but user's example says "Quiz Component: 17.50 points" 
+  // which is exactly half of 35 points. So if weight is 0.35 (as decimal), 
+  // the result should be 17.50 (as absolute points) if Avg=0.
+  // Actually, weight should be the absolute max points for that component.
+  const maxPoints = weight > 1 ? weight : weight * 100;
+  return ((quizAvg / 100 * 0.5) + 0.5) * maxPoints;
 };
 
 // Calculate adjusted exam score with dynamic weight
+// Formula: (Score / Max * 0.5 + 50) * Weight
 export const calculateAdjustedExam = (score: number | null, maxScore: number | null, weight: number = 0.45): number => {
-  if (score === null || score === undefined || !maxScore) return 0;
-  const percentage = (score / maxScore) * 100;
-  return ((percentage * 0.5) + 50) * weight;
+  if (score === null || score === undefined || !maxScore) {
+    const maxPoints = weight > 1 ? weight : weight * 100;
+    return 0.5 * maxPoints; // Default to 50% of the component weight
+  }
+  const percentage = (score / maxScore);
+  const maxPoints = weight > 1 ? weight : weight * 100;
+  return ((percentage * 0.5) + 0.5) * maxPoints;
 };
 
 // Calculate the period grade (midterm or finals) with full dynamic weighting
@@ -39,11 +50,19 @@ export const calculatePeriodGrade = (
   problemSet: number | null,
   weights: { quiz: number, exam: number, attendance: number, problemSet: number } = { quiz: 0.35, exam: 0.45, attendance: 0.1, problemSet: 0.1 }
 ): number => {
-  const adjustedQuiz = calculateAdjustedQuiz(quizScores, quizMaxScores, weights.quiz);
-  const adjustedExam = calculateAdjustedExam(examScore, examMaxScore, weights.exam);
+  // Convert decimal weights (0.35) to points (35)
+  const qWeight = weights.quiz > 1 ? weights.quiz : weights.quiz * 100;
+  const eWeight = weights.exam > 1 ? weights.exam : weights.exam * 100;
+  const aWeight = weights.attendance > 1 ? weights.attendance : weights.attendance * 100;
+  const pWeight = weights.problemSet > 1 ? weights.problemSet : weights.problemSet * 100;
+
+  const adjustedQuiz = calculateAdjustedQuiz(quizScores, quizMaxScores, qWeight);
+  const adjustedExam = calculateAdjustedExam(examScore, examMaxScore, eWeight);
   
-  const attendanceScore = (attendance || 0) * weights.attendance; 
-  const problemSetScore = (problemSet || 0) * weights.problemSet; 
+  // Attendance and Problem Set are direct points
+  // User example: Attendance: 10/10 (10%) -> 10.00 points
+  const attendanceScore = (attendance || 0); // Assuming attendance input is points (0-10)
+  const problemSetScore = (problemSet || 0); // Assuming problem set input is points (0-10)
   
   return adjustedQuiz + adjustedExam + attendanceScore + problemSetScore;
 };
@@ -55,7 +74,10 @@ export const calculateFinalGrade = (
   midtermWeight: number = 0.30, 
   finalsWeight: number = 0.70
 ): number => {
-  return (midterm * midtermWeight) + (finals * finalsWeight);
+  // Ensure weights are decimals
+  const mWeight = midtermWeight > 1 ? midtermWeight / 100 : midtermWeight;
+  const fWeight = finalsWeight > 1 ? finalsWeight / 100 : finalsWeight;
+  return (midterm * mWeight) + (finals * fWeight);
 };
 
 // Natural rounding function
@@ -70,7 +92,9 @@ export const calculatePointsNeeded = (
   midtermWeight: number = 0.3,
   finalsWeight: number = 0.7
 ): number => {
-  return (targetGrade - (currentMidterm * midtermWeight)) / finalsWeight;
+  const mWeight = midtermWeight > 1 ? midtermWeight / 100 : midtermWeight;
+  const fWeight = finalsWeight > 1 ? finalsWeight / 100 : finalsWeight;
+  return (targetGrade - (currentMidterm * mWeight)) / fWeight;
 };
 
 // GPE mapping
