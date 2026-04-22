@@ -1,18 +1,28 @@
 import React, { useEffect } from "react";
 import ModernGradeCalculator from "@/components/ModernGradeCalculator";
 
-const Index: React.FC = () => {
+interface IndexProps {
+  onSettingsClick?: (handler: () => void) => void;
+}
+
+const Index: React.FC<IndexProps> = ({ onSettingsClick }) => {
+  const calculatorRef = React.useRef<{ scrollToSettings: () => void }>(null);
+
   // Ensure dark mode is active by default for the "Gamer/Modern" aesthetic
   useEffect(() => {
     document.documentElement.classList.add('dark');
     // Force dark background on body to prevent white flashes
     document.body.classList.add('bg-background');
-  }, []);
+    
+    if (onSettingsClick && calculatorRef.current) {
+      onSettingsClick(() => calculatorRef.current?.scrollToSettings());
+    }
+  }, [onSettingsClick]);
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30">
       <main className="w-full">
-        <ModernGradeCalculator />
+        <ModernGradeCalculator ref={calculatorRef} />
       </main>
       
       {/* Visual background decorations for a "Modern" feel */}

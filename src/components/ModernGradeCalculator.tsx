@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { 
   Settings, 
   Plus, 
@@ -43,13 +43,20 @@ import {
 } from "@/utils/storage";
 import { generateImageTranscript } from "@/utils/imageExport";
 
-const ModernGradeCalculator: React.FC = () => {
+const ModernGradeCalculator = forwardRef<{ scrollToSettings: () => void }, {}>((props, ref) => {
   const [courses, setCourses] = useState<CourseData[]>([]);
   const [activeCourseId, setActiveCourseIdState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [periodTab, setPeriodTab] = useState("midterm");
   const [showCalculations, setShowCalculations] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    scrollToSettings: () => {
+      setConfigOpen(true);
+    }
+  }));
 
   const activeCourse = courses.find(c => c.id === activeCourseId);
 
@@ -245,7 +252,7 @@ const ModernGradeCalculator: React.FC = () => {
                   </Tooltip>
                 </TooltipProvider>
 
-                <Drawer>
+                <Drawer open={configOpen} onOpenChange={setConfigOpen}>
                   <DrawerTrigger asChild>
                     <Button variant="secondary" size="icon" className="rounded-xl w-12 h-12 bg-muted/50 border-white/5">
                       <Settings className="w-6 h-6" />
@@ -347,6 +354,6 @@ const ModernGradeCalculator: React.FC = () => {
       </ScrollArea>
     </div>
   );
-};
+});
 
 export default ModernGradeCalculator;

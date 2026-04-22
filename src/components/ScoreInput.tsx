@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
@@ -32,6 +32,8 @@ const ScoreInput: React.FC<ScoreInputProps> = ({
   maxValue,
   step = "1",
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value === "" ? null : Math.floor(parseFloat(e.target.value));
     if (value !== null && maxValue !== undefined && value > maxValue) value = maxValue;
@@ -48,7 +50,10 @@ const ScoreInput: React.FC<ScoreInputProps> = ({
   };
 
   return (
-    <div className="group space-y-2 bg-muted/20 p-4 rounded-2xl border border-transparent focus-within:border-primary/30 transition-all duration-200">
+    <div 
+      className="group space-y-2 bg-muted/20 p-4 rounded-2xl border border-transparent focus-within:border-primary/30 transition-all duration-200 cursor-text"
+      onClick={() => inputRef.current?.focus()}
+    >
       <div className="flex justify-between items-center mb-1">
         <Label className="text-sm font-semibold text-foreground/80">
           {label}
@@ -64,6 +69,7 @@ const ScoreInput: React.FC<ScoreInputProps> = ({
       <div className={`flex gap-3 ${showMaxScore ? 'grid grid-cols-2' : ''}`}>
         <div className="relative">
           <Input
+            ref={inputRef}
             type="number"
             placeholder={placeholder}
             value={score ?? ""}
@@ -81,7 +87,7 @@ const ScoreInput: React.FC<ScoreInputProps> = ({
         </div>
         
         {showMaxScore && (
-          <div className="relative">
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
             <Input
               type="number"
               placeholder={maxPlaceholder}

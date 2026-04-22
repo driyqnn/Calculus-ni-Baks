@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Calculator, 
@@ -23,11 +23,13 @@ import { Separator } from "@/components/ui/separator";
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  onSettingsClick?: () => void;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, onSettingsClick }) => {
   const location = useLocation();
   const path = location.pathname;
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-sans lg:flex-row lg:overflow-hidden">
@@ -92,12 +94,22 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </Button>
           </Link>
           
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="ghost" className="flex-1 flex flex-col gap-1 h-14 rounded-xl text-muted-foreground font-bold">
-                <Settings className="w-5 h-5" /><span className="text-[9px] font-black uppercase tracking-widest">Settings</span>
-              </Button>
-            </DrawerTrigger>
+          <Drawer open={open} onOpenChange={setOpen}>
+            {onSettingsClick ? (
+               <Button 
+                variant="ghost" 
+                onClick={onSettingsClick}
+                className="flex-1 flex flex-col gap-1 h-14 rounded-xl text-muted-foreground font-bold"
+               >
+                 <Settings className="w-5 h-5" /><span className="text-[9px] font-black uppercase tracking-widest">Settings</span>
+               </Button>
+            ) : (
+              <DrawerTrigger asChild>
+                <Button variant="ghost" className="flex-1 flex flex-col gap-1 h-14 rounded-xl text-muted-foreground font-bold">
+                  <Settings className="w-5 h-5" /><span className="text-[9px] font-black uppercase tracking-widest">Settings</span>
+                </Button>
+              </DrawerTrigger>
+            )}
             <DrawerContent className="rounded-t-2xl border-white/5 h-[85vh]">
               <DrawerHeader><DrawerTitle className="text-center font-black uppercase tracking-widest text-xs py-4">System Console</DrawerTitle></DrawerHeader>
               <ScrollArea className="h-full px-8 pb-20">
@@ -111,7 +123,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         { icon: <Boxes className="w-5 h-5" />, label: "PSet Generator", path: "https://psychiotric-sudo.github.io/pset_generator/" },
                         { icon: <Cpu className="w-5 h-5" />, label: "File Tree Gen", path: "https://09sychic.github.io/filetree/" },
                       ].map((tool, i) => (
-                        <a key={i} href={tool.path} target="_blank" rel="noreferrer" className="flex items-center gap-5 p-5 bg-primary/5 border border-primary/10 rounded-xl active:scale-[0.98] transition-transform">
+                        <a 
+                          key={i} 
+                          href={tool.path} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="flex items-center gap-5 p-5 bg-primary/5 border border-primary/10 rounded-xl active:scale-[0.98] transition-transform"
+                          onClick={() => setOpen(false)}
+                        >
                           <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">{tool.icon}</div>
                           <div className="flex-1">
                             <h4 className="text-xs font-black uppercase tracking-tight">{tool.label}</h4>
@@ -131,7 +150,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         { icon: <ShieldCheck className="w-4 h-4" />, label: "Privacy", path: "/privacy" },
                         { icon: <FileText className="w-4 h-4" />, label: "Terms", path: "/terms" },
                       ].map((item, i) => (
-                        <Button key={i} variant="outline" className="h-20 rounded-xl flex flex-col items-center justify-center gap-2 border-white/5 bg-muted/20 active:scale-95 transition-all" asChild>
+                        <Button 
+                          key={i} 
+                          variant="outline" 
+                          className="h-20 rounded-xl flex flex-col items-center justify-center gap-2 border-white/5 bg-muted/20 active:scale-95 transition-all" 
+                          asChild
+                          onClick={() => setOpen(false)}
+                        >
                           <Link to={item.path}>
                             <span className="opacity-40">{item.icon}</span>
                             <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>

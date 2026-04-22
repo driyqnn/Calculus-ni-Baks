@@ -17,8 +17,12 @@ const DeveloperPage: React.FC = () => {
       <main className="max-w-2xl mx-auto p-4 lg:p-12 space-y-12 animate-fade-in pb-32">
         <section className="text-center py-6 space-y-4">
           <div className="relative inline-block">
-            <div className="w-24 h-24 bg-gradient-to-tr from-primary to-purple-400 rounded-xl flex items-center justify-center mx-auto shadow-2xl shadow-primary/20 border-2 border-white/10">
-              <User className="w-12 h-12 text-white" />
+            <div className="w-24 h-24 bg-gradient-to-tr from-primary to-purple-400 rounded-xl flex items-center justify-center mx-auto shadow-2xl shadow-primary/20 border-2 border-white/10 overflow-hidden">
+              <img 
+                src="https://avatars.githubusercontent.com/u/163716236" 
+                alt="Developer Avatar" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <Badge className="absolute -bottom-2 -right-2 bg-green-500 hover:bg-green-500 border-2 border-background px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-lg">Available</Badge>
           </div>
