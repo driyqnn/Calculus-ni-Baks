@@ -119,9 +119,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, onSettingsClick }) =>
                     <div className="grid grid-cols-1 gap-3">
                       {[
                         { icon: <GraduationCap className="w-5 h-5" />, label: "GWA Calculator", path: "https://gwa-calculator-ni-baks.vercel.app/" },
-                        { icon: <FileCode className="w-5 h-5" />, label: "BSCE Curriculum", path: "https://psychiotric-sudo.github.io/curriculum/" },
-                        { icon: <Boxes className="w-5 h-5" />, label: "PSet Generator", path: "https://psychiotric-sudo.github.io/pset_generator/" },
-                        { icon: <Cpu className="w-5 h-5" />, label: "File Tree Gen", path: "https://09sychic.github.io/filetree/" },
+                        { icon: <FileCode className="w-5 h-5" />, label: "BSCE Curriculum", path: "https://chqrlzz-dev.github.io/curriculum/" },
+                        { icon: <Boxes className="w-5 h-5" />, label: "PSet Generator", path: "https://chqrlzz-dev.github.io/pset_generator/" },
+                        { icon: <Cpu className="w-5 h-5" />, label: "File Tree Gen", path: "https://chqrlzz-dev.github.io/filetree/" },
                       ].map((tool, i) => (
                         <a 
                           key={i} 
