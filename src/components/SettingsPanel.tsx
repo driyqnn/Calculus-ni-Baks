@@ -187,7 +187,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <div className="text-sm text-muted-foreground space-y-2">
                 <p>Grade Calculator for CE Students</p>
                 <p>Version 2.0</p>
-                <p>Developed by @09sychic</p>
+                <p>Developed by @chqrlzz-dev</p>
               </div>
             </CardContent>
           </Card>
