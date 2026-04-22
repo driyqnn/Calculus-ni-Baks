@@ -233,7 +233,7 @@ export const generatePDFTranscript = async (course: CourseData): Promise<void> =
     
     pdf.setTextColor(...secondaryColor);
     pdf.setFontSize(10);
-    pdf.text('Developed by @09sychic', 20, pageHeight - 12);
+    pdf.text('Developed by @chqrlzz-dev', 20, pageHeight - 12);
     pdf.text(`Generated from ${window.location.host}`, 20, pageHeight - 6);
     
     // Use Outfit font if available
