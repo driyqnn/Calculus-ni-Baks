@@ -210,90 +210,90 @@ const ModernGradeCalculator: React.FC = () => {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-md mx-auto p-4 laptop:max-w-4xl laptop:p-12">
-        {mainTab === "calculator" ? (
-          <div className="space-y-10">
-            <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/20 shadow-xl shadow-primary/5">
-                  <LayoutGrid className="w-6 h-6 text-primary" />
+      <main className="flex-1 w-full max-w-md mx-auto p-4 laptop:max-w-none laptop:grid laptop:grid-cols-[1fr_400px] laptop:gap-8 laptop:p-10 laptop:overflow-hidden">
+        <ScrollArea className="laptop:h-[calc(100vh-80px)]">
+          {mainTab === "calculator" ? (
+            <div className="space-y-10 pb-20">
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/20 shadow-xl shadow-primary/5">
+                    <LayoutGrid className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-black tracking-tight leading-none laptop:text-3xl">{activeCourse.name}</h1>
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active Stream</span>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-xl font-black tracking-tight leading-none laptop:text-3xl">{activeCourse.name}</h1>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Active Stream</span>
-                </div>
-              </div>
-              <Drawer>
-                <DrawerTrigger asChild>
-                  <Button variant="secondary" size="icon" className="rounded-2xl w-12 h-12 bg-muted/50 border-white/5 active:scale-95 transition-transform">
-                    <Settings className="w-6 h-6" />
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent className="rounded-t-[40px] border-white/5 h-[90vh]">
-                  <DrawerHeader><DrawerTitle className="text-center font-black uppercase tracking-widest text-xs py-2">Global Protocol</DrawerTitle></DrawerHeader>
-                  <ScrollArea className="p-8 h-full">
-                    <div className="max-w-md mx-auto space-y-10 pb-20">
-                      {/* Course Selection */}
-                      <div className="space-y-4">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-1">Subject Registry</Label>
-                        <CourseSelector courses={courses} activeCourseId={activeCourseId} onCourseSelect={(id) => { setActiveCourseIdState(id); setActiveCourseId(id); }} onCourseCreate={(c) => setCourses([...courses, c])} onCourseDelete={(id) => setCourses(courses.filter(c => c.id !== id))} onCourseUpdate={(c) => setCourses(courses.map(cur => cur.id === c.id ? c : cur))} />
-                      </div>
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <Button variant="secondary" size="icon" className="rounded-2xl w-12 h-12 bg-muted/50 border-white/5 active:scale-95 transition-transform">
+                      <Settings className="w-6 h-6" />
+                    </Button>
+                  </DrawerTrigger>
+                  <DrawerContent className="rounded-t-[40px] border-white/5 h-[90vh]">
+                    <DrawerHeader><DrawerTitle className="text-center font-black uppercase tracking-widest text-xs py-2">Global Protocol</DrawerTitle></DrawerHeader>
+                    <ScrollArea className="p-8 h-full">
+                      <div className="max-w-md mx-auto space-y-10 pb-20">
+                        {/* Course Selection */}
+                        <div className="space-y-4">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-1">Subject Registry</Label>
+                          <CourseSelector courses={courses} activeCourseId={activeCourseId} onCourseSelect={(id) => { setActiveCourseIdState(id); setActiveCourseId(id); }} onCourseCreate={(c) => setCourses([...courses, c])} onCourseDelete={(id) => setCourses(courses.filter(c => c.id !== id))} onCourseUpdate={(c) => setCourses(courses.map(cur => cur.id === c.id ? c : cur))} />
+                        </div>
 
-                      {/* Goal Feature Moved Here */}
-                      <div className="space-y-4">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary px-1">Target Achievement</Label>
-                        <div className="bg-primary/5 p-8 rounded-[36px] border border-primary/10 text-center space-y-6">
-                           <div className="space-y-1">
-                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Passing Threshold</span>
-                             <div className="text-6xl font-black text-primary tabular-nums tracking-tighter">{activeCourse.settings.targetGrade}%</div>
-                           </div>
-                           <div className="flex items-center justify-center gap-8">
-                             <Button variant="outline" size="icon" className="rounded-full w-14 h-14 border-white/10" onClick={() => updateCourse({...activeCourse, settings: {...activeCourse.settings, targetGrade: activeCourse.settings.targetGrade - 1}})}><Minus className="w-5 h-5" /></Button>
-                             <Button variant="outline" size="icon" className="rounded-full w-14 h-14 border-white/10" onClick={() => updateCourse({...activeCourse, settings: {...activeCourse.settings, targetGrade: activeCourse.settings.targetGrade + 1}})}><Plus className="w-5 h-5" /></Button>
-                           </div>
+                        {/* Goal Feature Moved Here */}
+                        <div className="space-y-4">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary px-1">Target Achievement</Label>
+                          <div className="bg-primary/5 p-8 rounded-[36px] border border-primary/10 text-center space-y-6">
+                             <div className="space-y-1">
+                               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Passing Threshold</span>
+                               <div className="text-6xl font-black text-primary tabular-nums tracking-tighter">{activeCourse.settings.targetGrade}%</div>
+                             </div>
+                             <div className="flex items-center justify-center gap-8">
+                               <Button variant="outline" size="icon" className="rounded-full w-14 h-14 border-white/10" onClick={() => updateCourse({...activeCourse, settings: {...activeCourse.settings, targetGrade: activeCourse.settings.targetGrade - 1}})}><Minus className="w-5 h-5" /></Button>
+                               <Button variant="outline" size="icon" className="rounded-full w-14 h-14 border-white/10" onClick={() => updateCourse({...activeCourse, settings: {...activeCourse.settings, targetGrade: activeCourse.settings.targetGrade + 1}})}><Plus className="w-5 h-5" /></Button>
+                             </div>
+                          </div>
+                        </div>
+
+                        {/* Weights */}
+                        <div className="space-y-4">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-1">Ratio Balance</Label>
+                          <Card className="rounded-[36px] border-white/5 bg-muted/20">
+                            <CardContent className="p-6 space-y-8">
+                              <div className="space-y-5">
+                                <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase">Midterm Ratio</span><span className="text-xs font-mono font-black">{Math.round(activeCourse.settings.midtermWeight * 100)}%</span></div>
+                                <Slider value={[activeCourse.settings.midtermWeight * 100]} max={100} min={0} step={5} onValueChange={(v) => handleWeightChange('midtermWeight', v[0])} />
+                                <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase">Finals Ratio</span><span className="text-xs font-mono font-black">{Math.round(activeCourse.settings.finalsWeight * 100)}%</span></div>
+                                <Slider value={[activeCourse.settings.finalsWeight * 100]} max={100} min={0} step={5} onValueChange={(v) => handleWeightChange('finalsWeight', v[0])} />
+                              </div>
+                              <Separator className="bg-white/5" />
+                              <div className="space-y-5">
+                                <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase text-primary">Quiz Block</span><span className="text-xs font-mono font-black">{Math.round((activeCourse.settings.quizWeight || 0.35) * 100)}%</span></div>
+                                <Slider value={[(activeCourse.settings.quizWeight || 0.35) * 100]} max={80} min={0} step={5} onValueChange={(v) => handleWeightChange('quizWeight', v[0])} />
+                                <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase text-purple-400">Exam Block</span><span className="text-xs font-mono font-black">{Math.round((activeCourse.settings.examWeight || 0.45) * 100)}%</span></div>
+                                <Slider value={[(activeCourse.settings.examWeight || 0.45) * 100]} max={80} min={0} step={5} onValueChange={(v) => handleWeightChange('examWeight', v[0])} />
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <Button variant="outline" className="h-16 rounded-3xl font-black uppercase tracking-widest text-[10px] gap-2"><Download className="w-4 h-4" /> PDF Transcript</Button>
+                          <Button variant="destructive" className="h-16 rounded-3xl font-black uppercase tracking-widest text-[10px] gap-2"><History className="w-4 h-4" /> Factory Reset</Button>
                         </div>
                       </div>
+                    </ScrollArea>
+                  </DrawerContent>
+                </Drawer>
+              </div>
 
-                      {/* Weights */}
-                      <div className="space-y-4">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground px-1">Ratio Balance</Label>
-                        <Card className="rounded-[36px] border-white/5 bg-muted/20">
-                          <CardContent className="p-6 space-y-8">
-                            <div className="space-y-5">
-                              <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase">Midterm Ratio</span><span className="text-xs font-mono font-black">{Math.round(activeCourse.settings.midtermWeight * 100)}%</span></div>
-                              <Slider value={[activeCourse.settings.midtermWeight * 100]} max={100} min={0} step={5} onValueChange={(v) => handleWeightChange('midtermWeight', v[0])} />
-                              <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase">Finals Ratio</span><span className="text-xs font-mono font-black">{Math.round(activeCourse.settings.finalsWeight * 100)}%</span></div>
-                              <Slider value={[activeCourse.settings.finalsWeight * 100]} max={100} min={0} step={5} onValueChange={(v) => handleWeightChange('finalsWeight', v[0])} />
-                            </div>
-                            <Separator className="bg-white/5" />
-                            <div className="space-y-5">
-                              <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase text-primary">Quiz Block</span><span className="text-xs font-mono font-black">{Math.round((activeCourse.settings.quizWeight || 0.35) * 100)}%</span></div>
-                              <Slider value={[(activeCourse.settings.quizWeight || 0.35) * 100]} max={80} min={0} step={5} onValueChange={(v) => handleWeightChange('quizWeight', v[0])} />
-                              <div className="flex justify-between items-center"><span className="text-[10px] font-black uppercase text-purple-400">Exam Block</span><span className="text-xs font-mono font-black">{Math.round((activeCourse.settings.examWeight || 0.45) * 100)}%</span></div>
-                              <Slider value={[(activeCourse.settings.examWeight || 0.45) * 100]} max={80} min={0} step={5} onValueChange={(v) => handleWeightChange('examWeight', v[0])} />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" className="h-16 rounded-3xl font-black uppercase tracking-widest text-[10px] gap-2"><Download className="w-4 h-4" /> PDF Transcript</Button>
-                        <Button variant="destructive" className="h-16 rounded-3xl font-black uppercase tracking-widest text-[10px] gap-2"><History className="w-4 h-4" /> Factory Reset</Button>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </DrawerContent>
-              </Drawer>
-            </div>
-
-            <Tabs value={periodTab} onValueChange={setPeriodTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1.5 rounded-[24px] h-16 border border-white/5 laptop:max-w-sm">
-                <TabsTrigger value="midterm" className="rounded-[18px] text-[10px] font-black uppercase tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-2xl transition-all duration-300">Midterm</TabsTrigger>
-                <TabsTrigger value="finals" className="rounded-[18px] text-[10px] font-black uppercase tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-2xl transition-all duration-300">Finals</TabsTrigger>
-              </TabsList>
-              
-              <div className="mt-10 laptop:grid laptop:grid-cols-2 laptop:gap-12 laptop:items-start">
-                <div className="space-y-10">
+              <Tabs value={periodTab} onValueChange={setPeriodTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-1.5 rounded-[24px] h-16 border border-white/5 laptop:max-w-sm">
+                  <TabsTrigger value="midterm" className="rounded-[18px] text-[10px] font-black uppercase tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-2xl transition-all duration-300">Midterm</TabsTrigger>
+                  <TabsTrigger value="finals" className="rounded-[18px] text-[10px] font-black uppercase tracking-[0.2em] data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-2xl transition-all duration-300">Finals</TabsTrigger>
+                </TabsList>
+                
+                <div className="mt-10">
                   <TabsContent value="midterm" className="m-0 focus-visible:outline-none">
                     <GradingPeriod periodName="Midterm" quizNumbers={[]} quizScores={activeCourse.midtermState.quizScores} quizMaxScores={activeCourse.midtermState.quizMaxScores} examScore={activeCourse.midtermState.examScore} examMaxScore={activeCourse.midtermState.examMaxScore} attendance={null} problemSet={null} periodGrade={midtermGrade} onChange={(f, v, i) => handleInputChange('midterm', f, v, i)} onAddQuiz={() => handleAddQuiz('midterm')} onRemoveQuiz={(i) => handleRemoveQuiz('midterm', i)} onShowCalc={() => setShowCalculations(!showCalculations)} quizCount={activeCourse.midtermState.quizScores.length} />
                   </TabsContent>
@@ -301,51 +301,62 @@ const ModernGradeCalculator: React.FC = () => {
                     <GradingPeriod periodName="Finals" quizNumbers={[]} quizScores={activeCourse.finalsState.quizScores} quizMaxScores={activeCourse.finalsState.quizMaxScores} examScore={activeCourse.finalsState.examScore} examMaxScore={activeCourse.finalsState.examMaxScore} attendance={null} problemSet={null} periodGrade={finalsGrade} onChange={(f, v, i) => handleInputChange('finals', f, v, i)} onAddQuiz={() => handleAddQuiz('finals')} onRemoveQuiz={(i) => handleRemoveQuiz('finals', i)} onShowCalc={() => setShowCalculations(!showCalculations)} quizCount={activeCourse.finalsState.quizScores.length} />
                   </TabsContent>
                 </div>
+              </Tabs>
 
-                <div className="space-y-10">
-                  {/* One-time Metrics Section (Global for course) */}
-                  <section className="space-y-6">
-                    <div className="flex items-center gap-2 px-2">
-                      <div className="w-1 h-6 bg-primary rounded-full" />
-                      <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">General Metrics</h3>
+              {/* Inline Scroll-down Proof */}
+              <Collapsible open={showCalculations} onOpenChange={setShowCalculations} className="w-full">
+                <CollapsibleContent className="space-y-4 animate-accordion-down overflow-hidden">
+                  <div className="bg-primary/5 border border-primary/10 rounded-[40px] p-6 laptop:p-10">
+                    <div className="flex items-center justify-between mb-8">
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Calculation Stream</h3>
+                      <Button variant="ghost" size="icon" onClick={() => setShowCalculations(false)} className="rounded-full hover:bg-primary/10"><ChevronUp className="w-4 h-4" /></Button>
                     </div>
-                    <div className="grid grid-cols-1 gap-4">
-                      <ScoreInput label="Attendance & Participation" score={activeCourse.midtermState.attendance} onScoreChange={(v) => { handleInputChange('midterm', 'attendance', v); handleInputChange('finals', 'attendance', v); }} placeholder="0" showMaxScore={false} maxValue={100} />
-                      <ScoreInput label="Problem Sets & Tasks" score={activeCourse.midtermState.problemSet} onScoreChange={(v) => { handleInputChange('midterm', 'problemSet', v); handleInputChange('finals', 'problemSet', v); }} placeholder="0" showMaxScore={false} maxValue={100} />
-                    </div>
-                  </section>
+                    <CalculationPreview midtermState={activeCourse.midtermState} finalsState={activeCourse.finalsState} grades={{midterm: midtermGrade, finals: finalsGrade, finalGrade}} quizCount={activeCourse.settings.quizCount} activeCourse={activeCourse} />
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
-                  {/* Inline Scroll-down Proof */}
-                  <Collapsible open={showCalculations} onOpenChange={setShowCalculations} className="w-full">
-                    <CollapsibleContent className="space-y-4 animate-accordion-down overflow-hidden">
-                      <div className="bg-primary/5 border border-primary/10 rounded-[40px] p-6 laptop:p-10">
-                        <div className="flex items-center justify-between mb-8">
-                          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Calculation Stream</h3>
-                          <Button variant="ghost" size="icon" onClick={() => setShowCalculations(false)} className="rounded-full hover:bg-primary/10"><ChevronUp className="w-4 h-4" /></Button>
-                        </div>
-                        <CalculationPreview midtermState={activeCourse.midtermState} finalsState={activeCourse.finalsState} grades={{midterm: midtermGrade, finals: finalsGrade, finalGrade}} quizCount={activeCourse.settings.quizCount} activeCourse={activeCourse} />
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
+              <Separator className="bg-white/5" />
+              <footer className="text-center py-10 space-y-6 opacity-40 laptop:text-left laptop:flex laptop:justify-between laptop:items-center">
+                <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[10px] font-black uppercase tracking-[0.2em] laptop:justify-start">
+                  <Link to="/about" className="hover:text-primary transition-colors">About</Link>
+                  <Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link>
+                  <Link to="/feedback" className="hover:text-primary transition-colors text-primary">Feedback</Link>
+                  <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
+                  <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
                 </div>
-              </div>
-            </Tabs>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em]">Calculus ni Baks · {new Date().getFullYear()}</p>
+              </footer>
+            </div>
+          ) : (
+            <FormulasPanel />
+          )}
+        </ScrollArea>
 
-            <Separator className="bg-white/5" />
-            <footer className="text-center py-10 space-y-6 opacity-40 laptop:text-left laptop:flex laptop:justify-between laptop:items-center">
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-[10px] font-black uppercase tracking-[0.2em] laptop:justify-start">
-                <Link to="/about" className="hover:text-primary transition-colors">About</Link>
-                <Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link>
-                <Link to="/feedback" className="hover:text-primary transition-colors text-primary">Feedback</Link>
-                <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
-                <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
-              </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em]">Calculus ni Baks · {new Date().getFullYear()}</p>
-            </footer>
-          </div>
-        ) : (
-          <FormulasPanel />
-        )}
+        {/* Laptop Sidebar Analytics Panel */}
+        <aside className="hidden laptop:flex flex-col gap-8 bg-muted/20 border-l border-white/5 p-8 laptop:h-[calc(100vh-80px)] overflow-y-auto">
+          <section className="space-y-6">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-6 bg-primary rounded-full" />
+              <h3 className="font-black text-xs uppercase tracking-widest text-muted-foreground">General Metrics</h3>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              <ScoreInput label="Attendance & Participation" score={activeCourse.midtermState.attendance} onScoreChange={(v) => { handleInputChange('midterm', 'attendance', v); handleInputChange('finals', 'attendance', v); }} placeholder="0" showMaxScore={false} maxValue={100} />
+              <ScoreInput label="Problem Sets & Tasks" score={activeCourse.midtermState.problemSet} onScoreChange={(v) => { handleInputChange('midterm', 'problemSet', v); handleInputChange('finals', 'problemSet', v); }} placeholder="0" showMaxScore={false} maxValue={100} />
+            </div>
+          </section>
+
+          <Card className="border-none bg-primary/5 rounded-[32px]">
+            <CardContent className="p-6">
+               <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-4">Goal Progress</h4>
+               <div className="flex justify-between items-baseline mb-2">
+                 <span className="text-3xl font-black">{naturalRound(finalGrade)}%</span>
+                 <span className="text-xs font-bold text-muted-foreground">Target: {activeCourse.settings.targetGrade}%</span>
+               </div>
+               <Progress value={(finalGrade / activeCourse.settings.targetGrade) * 100} className="h-2" />
+            </CardContent>
+          </Card>
+        </aside>
       </main>
 
       {/* Mobile Bottom Nav */}
