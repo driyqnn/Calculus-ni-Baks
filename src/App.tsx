@@ -8,7 +8,7 @@ import AboutPage from "./pages/AboutPage";
 import TermsPage from "./pages/TermsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CalculationsPage from "./pages/CalculationsPage";
-import SupportPage from "./pages/FAQPage";
+import SupportPage from "./pages/SupportPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import DeveloperPage from "./pages/DeveloperPage";
 import MainLayout from "./components/MainLayout";
