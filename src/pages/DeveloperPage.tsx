@@ -109,13 +109,13 @@ const DeveloperPage: React.FC = () => {
             <CardContent className="p-0">
               <div className="divide-y divide-white/5">
                 {[
-                  { name: "Josh Ammiel Azarce", id: "24343638811900104" },
-                  { name: "Ael John Gabriel Santural", id: "24604111752513880" },
-                  { name: "Sam Dasal", id: "25022575560664528" },
-                  { name: "Ram Rebadomia", id: "24038915585776734" },
-                  { name: "Rexer John Fuyonan", id: "24338810812370538" },
-                  { name: "Emmanuel John Osorio", id: "31274626728802704" },
-                  { name: "Christofer John Delojero", id: "9831950646933987" }
+                  { name: "Josh Ammiel Azarce", id: "100085330537050" },
+                  { name: "Ael John Gabriel Santural", id: "61567976189195" },
+                  { name: "Sam Dasal", id: "100031669007344" },
+                  { name: "Ram Rebadomia", id: "100042075660784" },
+                  { name: "Rexer John Fuyonan", id: "100053709364471" },
+                  { name: "Emmanuel John Osorio", id: "1513778046615001" },
+                  { name: "Christofer John Delojero", id: "100015735784681" }
                 ].map((person) => (
                   <a 
                     key={person.id} 
