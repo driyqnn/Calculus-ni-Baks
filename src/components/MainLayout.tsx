@@ -63,7 +63,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                <Link to="/faq" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">FAQ</Link>
                <Link to="/feedback" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors">Feedback</Link>
             </div>
-            <p className="text-[8px] font-medium text-muted-foreground/30 text-center uppercase tracking-widest">Calculus ni Baks v2.0</p>
+            <p className="text-[8px] font-medium text-muted-foreground/30 text-center uppercase tracking-widest">Code & Design by @chqrlzz</p>
           </div>
         </div>
       </aside>
@@ -95,7 +95,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <Drawer>
             <DrawerTrigger asChild>
               <Button variant="ghost" className="flex-1 flex flex-col gap-1 h-14 rounded-xl text-muted-foreground font-bold">
-                <Settings className="w-5 h-5" /><span className="text-[9px] font-black uppercase tracking-widest">Config</span>
+                <Settings className="w-5 h-5" /><span className="text-[9px] font-black uppercase tracking-widest">Settings</span>
               </Button>
             </DrawerTrigger>
             <DrawerContent className="rounded-t-2xl border-white/5 h-[85vh]">
@@ -107,9 +107,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     <div className="grid grid-cols-1 gap-3">
                       {[
                         { icon: <GraduationCap className="w-5 h-5" />, label: "GWA Calculator", path: "https://gwa-calculator-ni-baks.vercel.app/" },
-                        { icon: <FileCode className="w-5 h-5" />, label: "BSCE Curriculum", path: "#" },
-                        { icon: <Boxes className="w-5 h-5" />, label: "PSet Generator", path: "#" },
-                        { icon: <Cpu className="w-5 h-5" />, label: "File Tree Gen", path: "#" },
+                        { icon: <FileCode className="w-5 h-5" />, label: "BSCE Curriculum", path: "https://psychiotric-sudo.github.io/curriculum/" },
+                        { icon: <Boxes className="w-5 h-5" />, label: "PSet Generator", path: "https://psychiotric-sudo.github.io/pset_generator/" },
+                        { icon: <Cpu className="w-5 h-5" />, label: "File Tree Gen", path: "https://09sychic.github.io/filetree/" },
                       ].map((tool, i) => (
                         <a key={i} href={tool.path} target="_blank" rel="noreferrer" className="flex items-center gap-5 p-5 bg-primary/5 border border-primary/10 rounded-xl active:scale-[0.98] transition-transform">
                           <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">{tool.icon}</div>
